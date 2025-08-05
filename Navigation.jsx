@@ -3,11 +3,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import LandingPage from './Components/LandingPage';
-import SignInPage from './Components/SignInPage';
-import SignUpPage from './Components/SignUpPage';
-import AstrologerSignUp from './Components/AstrologerSignUp';
-import AstrologerHomeScreen from './Components/AstrologerHomeScreen';
-import UserHomeScreen from './Components/UserHomeScreen';
+import SignInPage from './Components/Sign_IN_UP_Pages/SignInPage';
+import SignUpPage from './Components/Sign_IN_UP_Pages/SignUpPage';
+import AstrologerSignUp from './Components/Sign_IN_UP_Pages/AstrologerSignUp';
+import AstrologerHomeScreen from './Screens/AstrologerHomeScreen';
+import UserHomeScreen from './Screens/UserHomeScreen';
 
 const Stack = createNativeStackNavigator();
 

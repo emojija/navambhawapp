@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const UserHomeScreen = () => {
+const KundliTab = () => {
   return (
     <View>
-      <Text>UserHomeScreen</Text>
+      <Text>KundliTab</Text>
     </View>
   )
 }
 
-export default UserHomeScreen
+export default KundliTab
 
 const styles = StyleSheet.create({})

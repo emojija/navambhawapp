@@ -15,12 +15,12 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="UserHome" component={UserHomeScreen} />
         <Stack.Screen name="Landing" component={LandingPage} />
         <Stack.Screen name="SignIn" component={SignInPage} />
         <Stack.Screen name="AstroSignIn" component={AstrologerSignUp} />
         <Stack.Screen name="SignUp" component={SignUpPage} />
         <Stack.Screen name="AstorHome" component={AstrologerHomeScreen} />
-        <Stack.Screen name="UserHome" component={UserHomeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

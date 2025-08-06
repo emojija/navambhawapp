@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import { MagnifyingGlassIcon } from 'react-native-heroicons/outline';
+import {LinearGradient} from 'react-native-linear-gradient'
 
 // Responsive utility for font size and spacing
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -167,12 +168,19 @@ const HomeTab = () => {
       <View style={styles.serviceCard}>
         <Text style={styles.serviceText}>Free Services</Text>
         <View style={styles.innService}>
+          
           <View style={styles.card}>
             <Image
               style={styles.cardImg}
               source={{
                 uri: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80', // Photo of Earth from space
               }}
+            />
+            <LinearGradient
+              colors={['transparent', '#4B006E']}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1.5 }}
             />
             <View style={styles.cardTextCont}>
               <Text style={styles.cardText}>Kundli/Birth</Text>
@@ -184,6 +192,12 @@ const HomeTab = () => {
               source={{
                 uri: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=800&q=80', // Buddhist monk in orange robe
               }}
+            />
+            <LinearGradient
+              colors={['transparent', '#4B006E']}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1.5 }}
             />
             <View style={styles.cardTextCont}>
               <Text style={styles.cardText}>Panchang</Text>
@@ -218,6 +232,12 @@ const HomeTab = () => {
                 uri: 'https://randomuser.me/api/portraits/men/32.jpg', // Example astrologer image
               }}
             />
+            <LinearGradient
+              colors={['transparent', '#4B006E']}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1.5 }}
+            />
             <View style={styles.cardTextCont}>
               <Text style={styles.cardText}>Pandits</Text>
             </View>
@@ -228,6 +248,12 @@ const HomeTab = () => {
               source={{
                 uri: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80', // Diwali/candle themed image (no h/w params)
               }}
+            />
+            <LinearGradient
+              colors={['transparent', '#4B006E']}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1.5 }}
             />
             <View style={styles.cardTextCont}>
               <Text style={styles.cardText}>Pooja</Text>

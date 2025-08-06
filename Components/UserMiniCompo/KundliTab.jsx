@@ -1,14 +1,349 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React from 'react';
+import {
+  View,
+  TextInput,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  Image,
+  Dimensions,
+  KeyboardAvoidingView,
+} from 'react-native';
+import { Formik } from 'formik';
+import { Picker } from '@react-native-picker/picker';
 
-const KundliTab = () => {
+// Responsive utility functions
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const guidelineBaseWidth = 375;
+const guidelineBaseHeight = 667;
+
+const scale = size => (SCREEN_WIDTH / guidelineBaseWidth) * size;
+const verticalScale = size => (SCREEN_HEIGHT / guidelineBaseHeight) * size;
+const moderateScale = (size, factor = 0.5) =>
+  size + (scale(size) - size) * factor;
+
+export default function KundliForm() {
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+  const years = Array.from({ length: 100 }, (_, i) => 2025 - i);
+  const hours = Array.from({ length: 24 }, (_, i) => i);
+  const minutes = Array.from({ length: 60 }, (_, i) => i);
+  const seconds = Array.from({ length: 60 }, (_, i) => i);
+
   return (
-    <View>
-      <Text>KundliTab</Text>
-    </View>
-  )
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+    >
+      <View style={styles.outerContainer}>
+        <View style={styles.container}>
+          <View>
+            <Text style={styles.title}>Kundli / Birth Chart</Text>
+            <Formik
+              initialValues={{
+                name: '',
+                gender: '',
+                day: '',
+                month: '',
+                year: '',
+                hour: '',
+                min: '',
+                sec: '',
+                birthPlace: '',
+              }}
+              onSubmit={values => {
+                console.log(values);
+              }}
+            >
+              {({ handleChange, handleSubmit, setFieldValue, values }) => (
+                <View style={styles.formGroup}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Name"
+                    value={values.name}
+                    onChangeText={handleChange('name')}
+                    placeholderTextColor="#aaa"
+                  />
+
+                  {/* Gender Picker */}
+                  <View style={[styles.pickerWrapper, styles.gapBottom]}>
+                    <Picker
+                      selectedValue={values.gender}
+                      onValueChange={itemValue => setFieldValue('gender', itemValue)}
+                      style={styles.picker}
+                      itemStyle={styles.pickerItem}
+                    >
+                      <Picker.Item label="Gender" value="" />
+                      <Picker.Item label="Male" value="male" />
+                      <Picker.Item label="Female" value="female" />
+                      <Picker.Item label="Other" value="other" />
+                    </Picker>
+                  </View>
+
+                  {/* Date Row */}
+                  <View style={[styles.row, styles.gapBottom]}>
+                    <View style={[styles.pickerWrapper, styles.rowGap]}>
+                      <Picker
+                        selectedValue={values.day}
+                        onValueChange={val => setFieldValue('day', val)}
+                        style={styles.picker}
+                        itemStyle={styles.pickerItem}
+                      >
+                        <Picker.Item label="Day" value="" />
+                        {days.map(d => (
+                          <Picker.Item key={d} label={`${d}`} value={d} />
+                        ))}
+                      </Picker>
+                    </View>
+
+                    <View style={[styles.pickerWrapper, styles.rowGap]}>
+                      <Picker
+                        selectedValue={values.month}
+                        onValueChange={val => setFieldValue('month', val)}
+                        style={styles.picker}
+                        itemStyle={styles.pickerItem}
+                      >
+                        <Picker.Item label="Month" value="" />
+                        {months.map(m => (
+                          <Picker.Item key={m} label={`${m}`} value={m} />
+                        ))}
+                      </Picker>
+                    </View>
+
+                    <View style={styles.pickerWrapper}>
+                      <Picker
+                        selectedValue={values.year}
+                        onValueChange={val => setFieldValue('year', val)}
+                        style={styles.picker}
+                        itemStyle={styles.pickerItem}
+                      >
+                        <Picker.Item label="Year" value="" />
+                        {years.map(y => (
+                          <Picker.Item key={y} label={`${y}`} value={y} />
+                        ))}
+                      </Picker>
+                    </View>
+                  </View>
+
+                  {/* Time Row */}
+                  <View style={[styles.row, styles.gapBottom]}>
+                    <View style={[styles.pickerWrapper, styles.rowGap]}>
+                      <Picker
+                        selectedValue={values.hour}
+                        onValueChange={val => setFieldValue('hour', val)}
+                        style={styles.picker}
+                        itemStyle={styles.pickerItem}
+                      >
+                        <Picker.Item label="Hour" value="" />
+                        {hours.map(h => (
+                          <Picker.Item key={h} label={`${h}`} value={h} />
+                        ))}
+                      </Picker>
+                    </View>
+
+                    <View style={[styles.pickerWrapper, styles.rowGap]}>
+                      <Picker
+                        selectedValue={values.min}
+                        onValueChange={val => setFieldValue('min', val)}
+                        style={styles.picker}
+                        itemStyle={styles.pickerItem}
+                      >
+                        <Picker.Item label="Min" value="" />
+                        {minutes.map(m => (
+                          <Picker.Item key={m} label={`${m}`} value={m} />
+                        ))}
+                      </Picker>
+                    </View>
+
+                    <View style={styles.pickerWrapper}>
+                      <Picker
+                        selectedValue={values.sec}
+                        onValueChange={val => setFieldValue('sec', val)}
+                        style={styles.picker}
+                        itemStyle={styles.pickerItem}
+                      >
+                        <Picker.Item label="Sec" value="" />
+                        {seconds.map(s => (
+                          <Picker.Item key={s} label={`${s}`} value={s} />
+                        ))}
+                      </Picker>
+                    </View>
+                  </View>
+
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Birth Place"
+                    value={values.birthPlace}
+                    onChangeText={handleChange('birthPlace')}
+                    placeholderTextColor="#aaa"
+                  />
+
+                  <TouchableOpacity
+                    style={styles.enhancedButton}
+                    onPress={handleSubmit}
+                    activeOpacity={0.85}
+                  >
+                    <Text style={styles.buttonText}>GET KUNDLI</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </Formik>
+          </View>
+
+          {/* Overlayed Image Section */}
+          <View style={styles.imageContainer}>
+            <Image
+              source={{
+                uri: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80',
+              }} // image of space
+              style={styles.rectImage}
+              resizeMode="cover"
+            />
+            <View style={styles.overlay}>
+              <Text style={styles.overlayText}>Get your Kundli and Birth Chart</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
+  );
 }
 
-export default KundliTab
-
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  // Remove scrollContainer and use a non-scrollable outer container
+  outerContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'stretch',
+    justifyContent: 'center',
+    // No minHeight or paddingBottom to avoid scroll
+  },
+  container: {
+    marginHorizontal: '2%',
+    padding: moderateScale(16),
+    paddingBottom: verticalScale(30),
+    backgroundColor: 'white',
+    borderRadius: moderateScale(10),
+    width: '96%',
+    alignSelf: 'center',
+    maxWidth: 500,
+  },
+  title: {
+    fontSize: scale(22),
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    marginVertical: verticalScale(10),
+    color: '#4B2067',
+    letterSpacing: 1,
+  },
+  formGroup: {
+    gap: verticalScale(10),
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingHorizontal: moderateScale(14),
+    paddingVertical: verticalScale(12),
+    borderRadius: moderateScale(8),
+    backgroundColor: '#fff',
+    fontSize: scale(16),
+    color: '#333',
+    width: '100%',
+  },
+  pickerWrapper: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: moderateScale(8),
+    flex: 1,
+    marginRight: moderateScale(6),
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    ...Platform.select({
+      android: {
+        paddingHorizontal: moderateScale(6),
+      },
+    }),
+    minWidth: scale(80),
+  },
+  picker: {
+    height: verticalScale(40),
+    width: '100%',
+    color: '#333',
+    fontSize: scale(15),
+  },
+  pickerItem: {
+    fontSize: scale(15),
+    height: verticalScale(50),
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 0,
+    width: '100%',
+  },
+  rowGap: {
+    marginRight: moderateScale(8),
+  },
+  gapBottom: {
+    marginBottom: 0,
+  },
+  enhancedButton: {
+    backgroundColor: '#82428f',
+    borderRadius: moderateScale(10),
+    paddingVertical: verticalScale(10),
+    alignItems: 'center',
+    marginTop: verticalScale(10),
+    shadowColor: '#62419c',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
+    elevation: 4,
+    width: '100%',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: scale(18),
+    letterSpacing: 1,
+  },
+  imageContainer: {
+    marginTop: verticalScale(20),
+    alignSelf: 'center',
+    width: '100%',
+    maxWidth: 400,
+    aspectRatio: 2.2,
+    borderRadius: moderateScale(10),
+    overflow: 'hidden',
+    position: 'relative',
+    backgroundColor: '#eee',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+  },
+  rectImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 0,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(76, 42, 110, 0.45)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  overlayText: {
+    color: '#fff',
+    fontSize: scale(20),
+    fontWeight: 'bold',
+    textAlign: 'center',
+    paddingHorizontal: moderateScale(16),
+    textShadowColor: 'rgba(0,0,0,0.25)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    letterSpacing: 0.5,
+  },
+});

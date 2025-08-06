@@ -16,10 +16,18 @@ import {
   ChatBubbleLeftIcon,
   HomeIcon,
   InboxArrowDownIcon,
+  MagnifyingGlassIcon,
   PhoneIcon,
   UserIcon,
   WalletIcon,
 } from 'react-native-heroicons/outline';
+import {
+  HomeIcon as HomeIconSolid,
+  BookOpenIcon as BookOpenIconSolid,
+  ChatBubbleLeftIcon as ChatBubbleLeftIconSolid,
+  PhoneIcon as PhoneIconSolid,
+  InboxArrowDownIcon as InboxArrowDownIconSolid,
+} from 'react-native-heroicons/solid';
 import HomeTab from '../Components/UserMiniCompo/HomeTab';
 import ChatTab from '../Components/UserMiniCompo/ChatTab';
 import CallTab from '../Components/UserMiniCompo/CallTab';
@@ -46,6 +54,7 @@ const WALLET_ICON_SIZE = ICON_SIZE; // Sync wallet icon size with others
 
 const ICON_COLOR = '#580A46'; // Unified icon color for top icons
 const LOWER_BAR_ICON_COLOR = '#454545'; // Light black for lower bar icons
+const LOWER_BAR_ICON_ACTIVE_COLOR = '#580A46'; // Active icon color
 
 const UserHomeScreen = () => {
   const [activeIndex, setActiveIndex] = useState('Home');
@@ -105,12 +114,18 @@ const UserHomeScreen = () => {
               <Text style={styles.welcomeText}>Welcome</Text>
             </View>
           </View>
-          {/* amount profile */}
+          {/* amount profile and search */}
           <View style={styles.topRight}>
             <TouchableOpacity style={styles.moneyBox}>
               <Text style={styles.money}>Rs 1000</Text>
               <WalletIcon color="white" size={WALLET_ICON_SIZE} />
             </TouchableOpacity>
+
+            {/* Always show search icon in top bar, not just for non-Home */}
+            {activeIndex !== 'Home'&& <TouchableOpacity style={styles.profileBox}>
+              <MagnifyingGlassIcon color="white" size={ICON_SIZE} />
+            </TouchableOpacity>}
+
             <View style={styles.profileBox}>
               <UserIcon color="white" size={ICON_SIZE} />
             </View>
@@ -126,56 +141,131 @@ const UserHomeScreen = () => {
       >
         <View style={styles.lowerBar}>
           <TouchableOpacity onPress={() => setActiveIndex('Home')} style={styles.lowerBarItem}>
-            <HomeIcon
-              size={ICON_SIZE}
-              color={LOWER_BAR_ICON_COLOR}
-              style={styles.lowerBarIcon}
-            />
-            <Text style={styles.lowerBarText}>Home</Text>
+            {activeIndex === 'Home' ? (
+              <HomeIconSolid
+                size={ICON_SIZE}
+                color={LOWER_BAR_ICON_ACTIVE_COLOR}
+                style={styles.lowerBarIcon}
+              />
+            ) : (
+              <HomeIcon
+                size={ICON_SIZE}
+                color={LOWER_BAR_ICON_COLOR}
+                style={styles.lowerBarIcon}
+              />
+            )}
+            <Text
+              style={[
+                styles.lowerBarText,
+                activeIndex === 'Home' && { color: LOWER_BAR_ICON_ACTIVE_COLOR, fontWeight: '700' },
+              ]}
+            >
+              Home
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setActiveIndex('Kundli')}
             style={styles.lowerBarItem}
           >
-            <BookOpenIcon
-              size={ICON_SIZE}
-              color={LOWER_BAR_ICON_COLOR}
-              style={styles.lowerBarIcon}
-            />
-            <Text style={styles.lowerBarText}>Kundli</Text>
+            {activeIndex === 'Kundli' ? (
+              <BookOpenIconSolid
+                size={ICON_SIZE}
+                color={LOWER_BAR_ICON_ACTIVE_COLOR}
+                style={styles.lowerBarIcon}
+              />
+            ) : (
+              <BookOpenIcon
+                size={ICON_SIZE}
+                color={LOWER_BAR_ICON_COLOR}
+                style={styles.lowerBarIcon}
+              />
+            )}
+            <Text
+              style={[
+                styles.lowerBarText,
+                activeIndex === 'Kundli' && { color: LOWER_BAR_ICON_ACTIVE_COLOR, fontWeight: '700' },
+              ]}
+            >
+              Kundli
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setActiveIndex('Chat')}
             style={styles.lowerBarItem}
           >
-            <ChatBubbleLeftIcon
-              size={ICON_SIZE}
-              color={LOWER_BAR_ICON_COLOR}
-              style={styles.lowerBarIcon}
-            />
-            <Text style={styles.lowerBarText}>Chat</Text>
+            {activeIndex === 'Chat' ? (
+              <ChatBubbleLeftIconSolid
+                size={ICON_SIZE}
+                color={LOWER_BAR_ICON_ACTIVE_COLOR}
+                style={styles.lowerBarIcon}
+              />
+            ) : (
+              <ChatBubbleLeftIcon
+                size={ICON_SIZE}
+                color={LOWER_BAR_ICON_COLOR}
+                style={styles.lowerBarIcon}
+              />
+            )}
+            <Text
+              style={[
+                styles.lowerBarText,
+                activeIndex === 'Chat' && { color: LOWER_BAR_ICON_ACTIVE_COLOR, fontWeight: '700' },
+              ]}
+            >
+              Chat
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setActiveIndex('Call')}
             style={styles.lowerBarItem}
           >
-            <PhoneIcon
-              size={ICON_SIZE}
-              color={LOWER_BAR_ICON_COLOR}
-              style={styles.lowerBarIcon}
-            />
-            <Text style={styles.lowerBarText}>Call</Text>
+            {activeIndex === 'Call' ? (
+              <PhoneIconSolid
+                size={ICON_SIZE}
+                color={LOWER_BAR_ICON_ACTIVE_COLOR}
+                style={styles.lowerBarIcon}
+              />
+            ) : (
+              <PhoneIcon
+                size={ICON_SIZE}
+                color={LOWER_BAR_ICON_COLOR}
+                style={styles.lowerBarIcon}
+              />
+            )}
+            <Text
+              style={[
+                styles.lowerBarText,
+                activeIndex === 'Call' && { color: LOWER_BAR_ICON_ACTIVE_COLOR, fontWeight: '700' },
+              ]}
+            >
+              Call
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setActiveIndex('Services')}
             style={styles.lowerBarItem}
           >
-            <InboxArrowDownIcon
-              size={ICON_SIZE}
-              color={LOWER_BAR_ICON_COLOR}
-              style={styles.lowerBarIcon}
-            />
-            <Text style={styles.lowerBarText}>Services</Text>
+            {activeIndex === 'Services' ? (
+              <InboxArrowDownIconSolid
+                size={ICON_SIZE}
+                color={LOWER_BAR_ICON_ACTIVE_COLOR}
+                style={styles.lowerBarIcon}
+              />
+            ) : (
+              <InboxArrowDownIcon
+                size={ICON_SIZE}
+                color={LOWER_BAR_ICON_COLOR}
+                style={styles.lowerBarIcon}
+              />
+            )}
+            <Text
+              style={[
+                styles.lowerBarText,
+                activeIndex === 'Services' && { color: LOWER_BAR_ICON_ACTIVE_COLOR, fontWeight: '700' },
+              ]}
+            >
+              Services
+            </Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -255,6 +345,7 @@ const styles = StyleSheet.create({
     padding: SCREEN_WIDTH * 0.01, // 2% of width
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: SCREEN_WIDTH * 0.015, // Add a little space between icons
   },
   lowerBar: {
     flexDirection: 'row',

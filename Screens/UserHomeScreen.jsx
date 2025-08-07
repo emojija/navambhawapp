@@ -1,36 +1,11 @@
-import {
-  Image,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  Platform,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import { Image, StatusBar, StyleSheet, Text, View, Dimensions, Platform, TouchableOpacity,} from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  BookOpenIcon,
-  ChatBubbleLeftIcon,
-  HomeIcon,
-  InboxArrowDownIcon,
-  MagnifyingGlassIcon,
-  PhoneIcon,
-  UserIcon,
-  WalletIcon,
-} from 'react-native-heroicons/outline';
-import {
-  HomeIcon as HomeIconSolid,
-  BookOpenIcon as BookOpenIconSolid,
-  ChatBubbleLeftIcon as ChatBubbleLeftIconSolid,
-  PhoneIcon as PhoneIconSolid,
-  InboxArrowDownIcon as InboxArrowDownIconSolid,
-} from 'react-native-heroicons/solid';
+import { BookOpenIcon, ChatBubbleLeftIcon, GlobeAltIcon, HomeIcon, InboxArrowDownIcon, MagnifyingGlassIcon,  UserIcon, WalletIcon,} from 'react-native-heroicons/outline';
+import {HomeIcon as HomeIconSolid, BookOpenIcon as BookOpenIconSolid, ChatBubbleLeftIcon as ChatBubbleLeftIconSolid, GlobeAltIcon as GlobeAltIconSolid ,  InboxArrowDownIcon as InboxArrowDownIconSolid,} from 'react-native-heroicons/solid';
 import HomeTab from '../Components/UserMiniCompo/HomeTab';
-import ChatTab from '../Components/UserMiniCompo/ChatTab';
-import CallTab from '../Components/UserMiniCompo/CallTab';
+import ChatTab from '../Components/UserMiniCompo/AstrologerChatTab';
+import CallTab from '../Components/UserMiniCompo/PoojaTab';
 import KundliTab from '../Components/UserMiniCompo/KundliTab';
 import ServiceTab from '../Components/UserMiniCompo/ServiceTab';
 
@@ -56,7 +31,7 @@ const ICON_COLOR = '#580A46'; // Unified icon color for top icons
 const LOWER_BAR_ICON_COLOR = '#454545'; // Light black for lower bar icons
 const LOWER_BAR_ICON_ACTIVE_COLOR = '#580A46'; // Active icon color
 
-const UserHomeScreen = () => {
+const UserHomeScreen = ({navigation}) => {
   const [activeIndex, setActiveIndex] = useState('Home');
 
   const renderMidPart = () => {
@@ -73,8 +48,10 @@ const UserHomeScreen = () => {
         return <ServiceTab />;
     }
   };
+
   return (
     <View style={styles.mainCont}>
+      {/* Top Bar */}
       <SafeAreaView edges={['top', 'left', 'right']}>
         <StatusBar
           barStyle="dark-content"
@@ -82,7 +59,6 @@ const UserHomeScreen = () => {
           translucent={false}
           hidden={false}
         />
-        {/* Top name info Bar  */}
         <View style={styles.topBar}>
           {/* name and pic  */}
           <View style={styles.topLeft}>
@@ -116,15 +92,17 @@ const UserHomeScreen = () => {
           </View>
           {/* amount profile and search */}
           <View style={styles.topRight}>
-            <TouchableOpacity style={styles.moneyBox}>
+            <View style={styles.moneyBox}>
               <Text style={styles.money}>Rs 1000</Text>
               <WalletIcon color="white" size={WALLET_ICON_SIZE} />
-            </TouchableOpacity>
+            </View>
 
             {/* Always show search icon in top bar, not just for non-Home */}
-            {activeIndex !== 'Home'&& <TouchableOpacity style={styles.profileBox}>
-              <MagnifyingGlassIcon color="white" size={ICON_SIZE} />
-            </TouchableOpacity>}
+            {activeIndex !== 'Home' && (
+              <TouchableOpacity onPress={()=>navigation.navigate('SearchAstro')} style={styles.profileBox}>
+                <MagnifyingGlassIcon color="white" size={ICON_SIZE} />
+              </TouchableOpacity>
+            )}
 
             <View style={styles.profileBox}>
               <UserIcon color="white" size={ICON_SIZE} />
@@ -133,8 +111,12 @@ const UserHomeScreen = () => {
         </View>
       </SafeAreaView>
 
-      <ScrollView>{renderMidPart()}</ScrollView>
+      {/* Middle Content (not scrollable, just renders the tab) */}
+      <View style={{ flex: 1 }}>
+        {renderMidPart()}
+      </View>
 
+      {/* Bottom Navigation Bar */}
       <SafeAreaView
         style={{ backgroundColor: 'white', padding: 0 }}
         edges={['left', 'right', 'bottom']}
@@ -212,7 +194,7 @@ const UserHomeScreen = () => {
                 activeIndex === 'Chat' && { color: LOWER_BAR_ICON_ACTIVE_COLOR, fontWeight: '700' },
               ]}
             >
-              Chat
+              Chat Astro
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -220,13 +202,13 @@ const UserHomeScreen = () => {
             style={styles.lowerBarItem}
           >
             {activeIndex === 'Call' ? (
-              <PhoneIconSolid
+              <GlobeAltIconSolid
                 size={ICON_SIZE}
                 color={LOWER_BAR_ICON_ACTIVE_COLOR}
                 style={styles.lowerBarIcon}
               />
             ) : (
-              <PhoneIcon
+              <GlobeAltIcon
                 size={ICON_SIZE}
                 color={LOWER_BAR_ICON_COLOR}
                 style={styles.lowerBarIcon}
@@ -238,7 +220,7 @@ const UserHomeScreen = () => {
                 activeIndex === 'Call' && { color: LOWER_BAR_ICON_ACTIVE_COLOR, fontWeight: '700' },
               ]}
             >
-              Call
+              Pooja
             </Text>
           </TouchableOpacity>
           <TouchableOpacity

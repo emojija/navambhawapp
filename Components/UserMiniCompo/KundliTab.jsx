@@ -31,6 +31,13 @@ export default function KundliForm() {
   const minutes = Array.from({ length: 60 }, (_, i) => i);
   const seconds = Array.from({ length: 60 }, (_, i) => i);
 
+  // Gender options as array for easier management
+  const genderOptions = [
+    { label: 'Gender', value: '' },
+    { label: 'Male', value: 'male' },
+    { label: 'Female', value: 'female' },
+  ];
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -38,161 +45,8 @@ export default function KundliForm() {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
     >
       <View style={styles.outerContainer}>
-        <View style={styles.container}>
-          <View>
-            <Text style={styles.title}>Kundli / Birth Chart</Text>
-            <Formik
-              initialValues={{
-                name: '',
-                gender: '',
-                day: '',
-                month: '',
-                year: '',
-                hour: '',
-                min: '',
-                sec: '',
-                birthPlace: '',
-              }}
-              onSubmit={values => {
-                console.log(values);
-              }}
-            >
-              {({ handleChange, handleSubmit, setFieldValue, values }) => (
-                <View style={styles.formGroup}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Name"
-                    value={values.name}
-                    onChangeText={handleChange('name')}
-                    placeholderTextColor="#aaa"
-                  />
-
-                  {/* Gender Picker */}
-                  <View style={[styles.pickerWrapper, styles.gapBottom]}>
-                    <Picker
-                      selectedValue={values.gender}
-                      onValueChange={itemValue => setFieldValue('gender', itemValue)}
-                      style={styles.picker}
-                      itemStyle={styles.pickerItem}
-                    >
-                      <Picker.Item label="Gender" value="" />
-                      <Picker.Item label="Male" value="male" />
-                      <Picker.Item label="Female" value="female" />
-                      <Picker.Item label="Other" value="other" />
-                    </Picker>
-                  </View>
-
-                  {/* Date Row */}
-                  <View style={[styles.row, styles.gapBottom]}>
-                    <View style={[styles.pickerWrapper, styles.rowGap]}>
-                      <Picker
-                        selectedValue={values.day}
-                        onValueChange={val => setFieldValue('day', val)}
-                        style={styles.picker}
-                        itemStyle={styles.pickerItem}
-                      >
-                        <Picker.Item label="Day" value="" />
-                        {days.map(d => (
-                          <Picker.Item key={d} label={`${d}`} value={d} />
-                        ))}
-                      </Picker>
-                    </View>
-
-                    <View style={[styles.pickerWrapper, styles.rowGap]}>
-                      <Picker
-                        selectedValue={values.month}
-                        onValueChange={val => setFieldValue('month', val)}
-                        style={styles.picker}
-                        itemStyle={styles.pickerItem}
-                      >
-                        <Picker.Item label="Month" value="" />
-                        {months.map(m => (
-                          <Picker.Item key={m} label={`${m}`} value={m} />
-                        ))}
-                      </Picker>
-                    </View>
-
-                    <View style={styles.pickerWrapper}>
-                      <Picker
-                        selectedValue={values.year}
-                        onValueChange={val => setFieldValue('year', val)}
-                        style={styles.picker}
-                        itemStyle={styles.pickerItem}
-                      >
-                        <Picker.Item label="Year" value="" />
-                        {years.map(y => (
-                          <Picker.Item key={y} label={`${y}`} value={y} />
-                        ))}
-                      </Picker>
-                    </View>
-                  </View>
-
-                  {/* Time Row */}
-                  <View style={[styles.row, styles.gapBottom]}>
-                    <View style={[styles.pickerWrapper, styles.rowGap]}>
-                      <Picker
-                        selectedValue={values.hour}
-                        onValueChange={val => setFieldValue('hour', val)}
-                        style={styles.picker}
-                        itemStyle={styles.pickerItem}
-                      >
-                        <Picker.Item label="Hour" value="" />
-                        {hours.map(h => (
-                          <Picker.Item key={h} label={`${h}`} value={h} />
-                        ))}
-                      </Picker>
-                    </View>
-
-                    <View style={[styles.pickerWrapper, styles.rowGap]}>
-                      <Picker
-                        selectedValue={values.min}
-                        onValueChange={val => setFieldValue('min', val)}
-                        style={styles.picker}
-                        itemStyle={styles.pickerItem}
-                      >
-                        <Picker.Item label="Min" value="" />
-                        {minutes.map(m => (
-                          <Picker.Item key={m} label={`${m}`} value={m} />
-                        ))}
-                      </Picker>
-                    </View>
-
-                    <View style={styles.pickerWrapper}>
-                      <Picker
-                        selectedValue={values.sec}
-                        onValueChange={val => setFieldValue('sec', val)}
-                        style={styles.picker}
-                        itemStyle={styles.pickerItem}
-                      >
-                        <Picker.Item label="Sec" value="" />
-                        {seconds.map(s => (
-                          <Picker.Item key={s} label={`${s}`} value={s} />
-                        ))}
-                      </Picker>
-                    </View>
-                  </View>
-
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Birth Place"
-                    value={values.birthPlace}
-                    onChangeText={handleChange('birthPlace')}
-                    placeholderTextColor="#aaa"
-                  />
-
-                  <TouchableOpacity
-                    style={styles.enhancedButton}
-                    onPress={handleSubmit}
-                    activeOpacity={0.85}
-                  >
-                    <Text style={styles.buttonText}>GET KUNDLI</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </Formik>
-          </View>
-
-          {/* Overlayed Image Section */}
+        {/* Overlayed Image Section - move banner to top */}
+        <View style={styles.bannerWrapper}>
           <View style={styles.imageContainer}>
             <Image
               source={{
@@ -206,29 +60,188 @@ export default function KundliForm() {
             </View>
           </View>
         </View>
+        <View style={styles.container}>
+          <Text style={styles.title}>Kundli / Birth Chart</Text>
+          <Formik
+            initialValues={{
+              name: '',
+              gender: '',
+              day: '',
+              month: '',
+              year: '',
+              hour: '',
+              min: '',
+              sec: '',
+              birthPlace: '',
+            }}
+            onSubmit={values => {
+              console.log(values);
+            }}
+          >
+            {({ handleChange, handleSubmit, setFieldValue, values }) => (
+              <View style={styles.formGroup}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Name"
+                  value={values.name}
+                  onChangeText={handleChange('name')}
+                  placeholderTextColor="#aaa"
+                />
+
+                {/* Gender Picker */}
+                <View style={[styles.pickerWrapper, styles.gapBottom, styles.genderPickerWrapper]}>
+                  <Picker
+                    selectedValue={values.gender}
+                    onValueChange={itemValue => setFieldValue('gender', itemValue)}
+                    style={styles.genderPicker}
+                    itemStyle={styles.genderPickerItem}
+                    accessibilityLabel="Select Gender"
+                  >
+                    {genderOptions.map(opt => (
+                      <Picker.Item key={opt.value} label={opt.label} value={opt.value} />
+                    ))}
+                  </Picker>
+                </View>
+
+                {/* Date Row */}
+                <View style={[styles.row, styles.gapBottom]}>
+                  <View style={[styles.pickerWrapper, styles.rowGap]}>
+                    <Picker
+                      selectedValue={values.day}
+                      onValueChange={val => setFieldValue('day', val)}
+                      style={styles.picker}
+                      itemStyle={styles.pickerItem}
+                    >
+                      <Picker.Item label="Day" value="" />
+                      {days.map(d => (
+                        <Picker.Item key={d} label={`${d}`} value={d} />
+                      ))}
+                    </Picker>
+                  </View>
+
+                  <View style={[styles.pickerWrapper, styles.rowGap]}>
+                    <Picker
+                      selectedValue={values.month}
+                      onValueChange={val => setFieldValue('month', val)}
+                      style={styles.picker}
+                      itemStyle={styles.pickerItem}
+                    >
+                      <Picker.Item label="Month" value="" />
+                      {months.map(m => (
+                        <Picker.Item key={m} label={`${m}`} value={m} />
+                      ))}
+                    </Picker>
+                  </View>
+
+                  <View style={styles.pickerWrapper}>
+                    <Picker
+                      selectedValue={values.year}
+                      onValueChange={val => setFieldValue('year', val)}
+                      style={styles.picker}
+                      itemStyle={styles.pickerItem}
+                    >
+                      <Picker.Item label="Year" value="" />
+                      {years.map(y => (
+                        <Picker.Item key={y} label={`${y}`} value={y} />
+                      ))}
+                    </Picker>
+                  </View>
+                </View>
+
+                {/* Time Row */}
+                <View style={[styles.row, styles.gapBottom]}>
+                  <View style={[styles.pickerWrapper, styles.rowGap]}>
+                    <Picker
+                      selectedValue={values.hour}
+                      onValueChange={val => setFieldValue('hour', val)}
+                      style={styles.picker}
+                      itemStyle={styles.pickerItem}
+                    >
+                      <Picker.Item label="Hour" value="" />
+                      {hours.map(h => (
+                        <Picker.Item key={h} label={`${h}`} value={h} />
+                      ))}
+                    </Picker>
+                  </View>
+
+                  <View style={[styles.pickerWrapper, styles.rowGap]}>
+                    <Picker
+                      selectedValue={values.min}
+                      onValueChange={val => setFieldValue('min', val)}
+                      style={styles.picker}
+                      itemStyle={styles.pickerItem}
+                    >
+                      <Picker.Item label="Min" value="" />
+                      {minutes.map(m => (
+                        <Picker.Item key={m} label={`${m}`} value={m} />
+                      ))}
+                    </Picker>
+                  </View>
+
+                  <View style={styles.pickerWrapper}>
+                    <Picker
+                      selectedValue={values.sec}
+                      onValueChange={val => setFieldValue('sec', val)}
+                      style={styles.picker}
+                      itemStyle={styles.pickerItem}
+                    >
+                      <Picker.Item label="Sec" value="" />
+                      {seconds.map(s => (
+                        <Picker.Item key={s} label={`${s}`} value={s} />
+                      ))}
+                    </Picker>
+                  </View>
+                </View>
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="Birth Place"
+                  value={values.birthPlace}
+                  onChangeText={handleChange('birthPlace')}
+                  placeholderTextColor="#aaa"
+                />
+
+                {/* Add margin to the button to separate it from the banner */}
+                <TouchableOpacity
+                  style={styles.enhancedButton}
+                  onPress={handleSubmit}
+                  activeOpacity={0.85}
+                >
+                  <Text style={styles.buttonText}>GET KUNDLI</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </Formik>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  // Remove scrollContainer and use a non-scrollable outer container
   outerContainer: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'stretch',
-    justifyContent: 'center',
-    // No minHeight or paddingBottom to avoid scroll
+    justifyContent: 'flex-start',
+  },
+  bannerWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: verticalScale(18),
+    marginBottom: verticalScale(10),
   },
   container: {
     marginHorizontal: '2%',
-    padding: moderateScale(16),
+    paddingHorizontal: moderateScale(16),
+    paddingTop: verticalScale(10),
     paddingBottom: verticalScale(30),
-    backgroundColor: 'white',
+    // backgroundColor: 'black',
     borderRadius: moderateScale(10),
     width: '96%',
     alignSelf: 'center',
     maxWidth: 500,
+    justifyContent: 'flex-start',
   },
   title: {
     fontSize: scale(22),
@@ -267,6 +280,27 @@ const styles = StyleSheet.create({
     }),
     minWidth: scale(80),
   },
+  genderPickerWrapper: {
+    height: verticalScale(50),
+    minHeight: verticalScale(50),
+    justifyContent: 'center',
+  },
+  genderPicker: {
+    height: verticalScale(50),
+    width: '100%',
+    color: '#333',
+    fontSize: scale(16),
+    ...Platform.select({
+      android: {
+        paddingVertical: verticalScale(),
+      },
+    }),
+  },
+  genderPickerItem: {
+    fontSize: scale(16),
+    height: verticalScale(54),
+    lineHeight: verticalScale(54),
+  },
   picker: {
     height: verticalScale(40),
     width: '100%',
@@ -294,7 +328,8 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(10),
     paddingVertical: verticalScale(10),
     alignItems: 'center',
-    marginTop: verticalScale(10),
+    marginTop: verticalScale(20), // Increased margin to separate from form fields
+    marginBottom: verticalScale(18), // Reduced margin to fit better with smaller banner
     shadowColor: '#62419c',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.18,
@@ -309,11 +344,10 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   imageContainer: {
-    marginTop: verticalScale(20),
     alignSelf: 'center',
     width: '100%',
     maxWidth: 400,
-    aspectRatio: 2.2,
+    aspectRatio: 3.5, // Decreased height for the banner
     borderRadius: moderateScale(10),
     overflow: 'hidden',
     position: 'relative',
@@ -323,6 +357,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 8,
+    minHeight: verticalScale(60), // Ensures banner is visible but not too tall
+    maxHeight: verticalScale(90),
   },
   rectImage: {
     width: '100%',
@@ -334,13 +370,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(76, 42, 110, 0.45)',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: moderateScale(8),
   },
   overlayText: {
     color: '#fff',
-    fontSize: scale(20),
+    fontSize: scale(16), // Slightly smaller text for smaller banner
     fontWeight: 'bold',
     textAlign: 'center',
-    paddingHorizontal: moderateScale(16),
     textShadowColor: 'rgba(0,0,0,0.25)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,

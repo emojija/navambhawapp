@@ -6,10 +6,13 @@ import {
   Image,
   FlatList,
   Platform,
+  ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import React from 'react';
 import { MagnifyingGlassIcon } from 'react-native-heroicons/outline';
 import {LinearGradient} from 'react-native-linear-gradient'
+import { useNavigation } from '@react-navigation/native';
 
 // Responsive utility for font size and spacing
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -132,18 +135,25 @@ const PersonCard = ({ item }) => {
   );
 };
 
-const HomeTab = () => {
+const HomeTab = (props) => {
+  // Accept navigation from props or useNavigation as fallback
+  const navigation = useNavigation()
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {/* search bar  */}
-      <View style={styles.searchBar}>
-        <Text style={styles.placeholderText}>Search Astrologerss</Text>
+      <TouchableOpacity
+        style={styles.searchBar}
+        activeOpacity={0.8}
+        onPress={() =>  navigation.navigate('SearchAstro')}
+      >
+        <Text style={styles.placeholderText}>Search Astrologers</Text>
         <MagnifyingGlassIcon
           size={moderateScale(25)}
           color="#757575"
           style={styles.icon}
         />
-      </View>
+      </TouchableOpacity>
 
       {/* image banner  */}
       <View style={styles.imgcont}>
@@ -288,7 +298,7 @@ const HomeTab = () => {
           resizeMode="cover"
         />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

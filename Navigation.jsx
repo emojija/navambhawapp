@@ -8,6 +8,7 @@ import SignUpPage from './Components/Sign_IN_UP_Pages/SignUpPage';
 import AstrologerSignUp from './Components/Sign_IN_UP_Pages/AstrologerSignUp';
 import AstrologerHomeScreen from './Screens/AstrologerHomeScreen';
 import UserHomeScreen from './Screens/UserHomeScreen';
+import SearchAstrologer from './Components/UserMiniCompo/SearchAstrologer';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +17,7 @@ const Navigation = () => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="UserHome" component={UserHomeScreen} />
+        <Stack.Screen name="SearchAstro" component={SearchAstrologer} />
         <Stack.Screen name="Landing" component={LandingPage} />
         <Stack.Screen name="SignIn" component={SignInPage} />
         <Stack.Screen name="AstroSignIn" component={AstrologerSignUp} />

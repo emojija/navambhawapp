@@ -26,7 +26,12 @@ const FAKE_POOJA_COUNT = 6;
 
 const FakePoojaCard = () => (
   <View style={styles.poojaCardContainer}>
-    <Image source={{ uri: ''}} style={styles.poojaImage} />
+    <Image
+      source={{
+        uri: 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg',
+      }}
+      style={[styles.poojaImage, { opacity: 0.3 }]}
+    />
     <Text
       style={[
         styles.poojaName,

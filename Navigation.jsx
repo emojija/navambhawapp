@@ -27,8 +27,8 @@ const Navigation = () => {
         <Stack.Screen name="SearchAstro" component={SearchAstrologer} />
         <Stack.Screen name="AstroProfile" component={AstrologerProfile} />
         <Stack.Screen name="PoojaInfo" component={PoojaFullInfo} />
-        <Stack.Screen name="AstorHome" component={AstrologerHomeScreen} />
         <Stack.Screen name="Panchang" component={Panchang} />
+        <Stack.Screen name="AstorHome" component={AstrologerHomeScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>

@@ -23,7 +23,7 @@ const SignInPage = ({ navigation }) => {
         { Phone, Password }
       );
       if (response.status === 200) {
-        navigation.navigate('UserHome');
+        navigation.replace('UserHome');
         console.log('Login successful:', response.data);
       } else {
         console.error('Login failed: Unexpected response status', response.status);

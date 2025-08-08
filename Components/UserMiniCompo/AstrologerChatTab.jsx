@@ -1,5 +1,7 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState, useMemo } from 'react';
 import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, Dimensions } from 'react-native';
+
 
 // Responsive utility functions
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -77,14 +79,39 @@ const astrologers = [
 ];
 
 // AstrologerCard component for rendering each astrologer card
-const AstrologerCard = ({ astrologer }) => {
-  // Make the font size of the rating number equal to the rating value * 4 + 8 (for example)
-  // So rating 4.7 => 4.7*4+8 = 26.8, 4.5 => 26, 4.9 => 27.6, etc.
-  // You can adjust the multiplier and base as needed for visual balance.
-  // const ratingFontSize = scale(astrologer.rating * 4 + 8);
-
+// const fakeAstrologerCard = ({  }) => {
+//   return (
+//     <View style={styles.cardContainer}>
+//       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+//         <Image source={{ uri: '' }} style={styles.avatar} />
+//         <View style={styles.expTextContainer}>
+//           <Text style={styles.expText}> yrs exp</Text>
+//         </View>
+//       </View>
+//       <View style={styles.cardInfo}>
+     
+//         <View style={styles.nameRow}>
+//           <Text style={styles.name}></Text>
+//         </View>
+//         <Text style={styles.expertise} numberOfLines={1} ellipsizeMode="tail">
+         
+//         </Text>
+       
+//         <Text style={styles.details}>
+         
+//         </Text>
+       
+//         <View style={styles.priceChatRow}>
+//           <Text style={styles.price}></Text>
+//           <Text style={[styles.rating]}></Text>
+//         </View>
+//       </View>
+//     </View>
+//   );
+// };
+const AstrologerCard = ({ astrologer , navigation }) => {
   return (
-    <View style={styles.cardContainer}>
+    <TouchableOpacity onPress={()=>navigation.navigate('AstroProfile')} activeOpacity={0.95} style={styles.cardContainer}>
       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Image source={{ uri: astrologer.image }} style={styles.avatar} />
         <View style={styles.expTextContainer}>
@@ -92,24 +119,24 @@ const AstrologerCard = ({ astrologer }) => {
         </View>
       </View>
       <View style={styles.cardInfo}>
-        {/* Name and Rating Row */}
+     
         <View style={styles.nameRow}>
           <Text style={styles.name}>{astrologer.name}</Text>
         </View>
         <Text style={styles.expertise} numberOfLines={1} ellipsizeMode="tail">
           {astrologer.expertise.join(', ')}
         </Text>
-        {/* Languages */}
+       
         <Text style={styles.details}>
           {astrologer.languages.join(', ')}
         </Text>
-        {/* Price and Chat Button Row */}
+       
         <View style={styles.priceChatRow}>
           <Text style={styles.price}>₹{astrologer.pricePerMin}/min</Text>
           <Text style={[styles.rating]}>⭐ {astrologer.rating}</Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -136,6 +163,8 @@ const SpecializationItem = ({ item, selected, onPress }) => (
 
 const ChatTab = () => {
   const [selectedSpec, setSelectedSpec] = useState("All");
+  const navigation  = useNavigation()
+  // const [isLoading,setIsLoadidng] = useState(null)
 
   const filteredAstrologers = useMemo(() => {
     if (selectedSpec === "All") return astrologers;
@@ -171,7 +200,7 @@ const ChatTab = () => {
           data={filteredAstrologers}
           horizontal={false}
           keyExtractor={item => item.id}
-          renderItem={({ item }) => <AstrologerCard astrologer={item} />}
+          renderItem={({ item }) => <AstrologerCard astrologer={item} navigation={navigation} />}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingHorizontal: moderateScale(10),
@@ -204,12 +233,12 @@ const styles = StyleSheet.create({
   topSelector: {
     position: 'static',
     top: '0',
-    paddingTop: verticalScale(10),
+    paddingTop: verticalScale(2),
     paddingBottom: verticalScale(2),
     backgroundColor: '#f9f7fc',
   },
   specializationItem: {
-    paddingVertical: verticalScale(8),
+    paddingVertical: verticalScale(5),
     paddingHorizontal: moderateScale(16),
     backgroundColor: '#f2e6fa',
     borderRadius: moderateScale(20),

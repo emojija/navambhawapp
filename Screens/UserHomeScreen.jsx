@@ -1,11 +1,11 @@
 import { Image, StatusBar, StyleSheet, Text, View, Dimensions, Platform, TouchableOpacity,} from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { BookOpenIcon, ChatBubbleLeftIcon, GlobeAltIcon, HomeIcon, InboxArrowDownIcon, MagnifyingGlassIcon,  UserIcon, WalletIcon,} from 'react-native-heroicons/outline';
+import { BookOpenIcon, ChatBubbleLeftIcon, GlobeAltIcon, HomeIcon, InboxArrowDownIcon, MagnifyingGlassIcon,  PlusCircleIcon,  UserIcon, WalletIcon,} from 'react-native-heroicons/outline';
 import {HomeIcon as HomeIconSolid, BookOpenIcon as BookOpenIconSolid, ChatBubbleLeftIcon as ChatBubbleLeftIconSolid, GlobeAltIcon as GlobeAltIconSolid ,  InboxArrowDownIcon as InboxArrowDownIconSolid,} from 'react-native-heroicons/solid';
 import HomeTab from '../Components/UserMiniCompo/HomeTab';
-import ChatTab from '../Components/UserMiniCompo/AstrologerChatTab';
-import CallTab from '../Components/UserMiniCompo/PoojaTab';
+import AstrologerChatTab  from '../Components/UserMiniCompo/AstrologerChatTab';
+import PoojaTab from '../Components/UserMiniCompo/PoojaTab';
 import KundliTab from '../Components/UserMiniCompo/KundliTab';
 import ServiceTab from '../Components/UserMiniCompo/ServiceTab';
 
@@ -30,22 +30,22 @@ const WALLET_ICON_SIZE = ICON_SIZE; // Sync wallet icon size with others
 const ICON_COLOR = '#580A46'; // Unified icon color for top icons
 const LOWER_BAR_ICON_COLOR = '#454545'; // Light black for lower bar icons
 const LOWER_BAR_ICON_ACTIVE_COLOR = '#580A46'; // Active icon color
-
+const Money = 100
 const UserHomeScreen = ({navigation}) => {
   const [activeIndex, setActiveIndex] = useState('Home');
 
   const renderMidPart = () => {
     switch (activeIndex) {
       case 'Home':
-        return <HomeTab />;
-      case 'Chat':
-        return <ChatTab />;
-      case 'Call':
-        return <CallTab />;
+        return <HomeTab setActiveIndex={setActiveIndex} />;
+      case 'Talk':
+        return  <AstrologerChatTab/>;
+      case 'Pooja':
+        return <PoojaTab />;
       case 'Kundli':
         return <KundliTab />;
       case 'Services':
-        return <ServiceTab />;
+        return <ServiceTab setActiveIndex={setActiveIndex} />;
     }
   };
 
@@ -93,8 +93,12 @@ const UserHomeScreen = ({navigation}) => {
           {/* amount profile and search */}
           <View style={styles.topRight}>
             <View style={styles.moneyBox}>
-              <Text style={styles.money}>Rs 1000</Text>
-              <WalletIcon color="white" size={WALLET_ICON_SIZE} />
+              <Text style={styles.money}>Rs {Money}</Text>
+              {Money < 100 ? (
+                <PlusCircleIcon color="white" size={WALLET_ICON_SIZE} />
+              ) : (
+                <WalletIcon color="white" size={WALLET_ICON_SIZE} />
+              )}
             </View>
 
             {/* Always show search icon in top bar, not just for non-Home */}
@@ -172,10 +176,10 @@ const UserHomeScreen = ({navigation}) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => setActiveIndex('Chat')}
+            onPress={() => setActiveIndex('Talk')}
             style={styles.lowerBarItem}
           >
-            {activeIndex === 'Chat' ? (
+            {activeIndex === 'Talk' ? (
               <ChatBubbleLeftIconSolid
                 size={ICON_SIZE}
                 color={LOWER_BAR_ICON_ACTIVE_COLOR}
@@ -191,17 +195,17 @@ const UserHomeScreen = ({navigation}) => {
             <Text
               style={[
                 styles.lowerBarText,
-                activeIndex === 'Chat' && { color: LOWER_BAR_ICON_ACTIVE_COLOR, fontWeight: '700' },
+                activeIndex === 'Talk' && { color: LOWER_BAR_ICON_ACTIVE_COLOR, fontWeight: '700' },
               ]}
             >
               Chat Astro
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => setActiveIndex('Call')}
+            onPress={() => setActiveIndex('Pooja')}
             style={styles.lowerBarItem}
           >
-            {activeIndex === 'Call' ? (
+            {activeIndex === 'Pooja' ? (
               <GlobeAltIconSolid
                 size={ICON_SIZE}
                 color={LOWER_BAR_ICON_ACTIVE_COLOR}
@@ -217,7 +221,7 @@ const UserHomeScreen = ({navigation}) => {
             <Text
               style={[
                 styles.lowerBarText,
-                activeIndex === 'Call' && { color: LOWER_BAR_ICON_ACTIVE_COLOR, fontWeight: '700' },
+                activeIndex === 'Pooja' && { color: LOWER_BAR_ICON_ACTIVE_COLOR, fontWeight: '700' },
               ]}
             >
               Pooja

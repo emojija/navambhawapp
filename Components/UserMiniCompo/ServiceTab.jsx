@@ -1,87 +1,155 @@
-import { Image, ScrollView, StyleSheet, Text, View, Dimensions } from 'react-native'
+import { Image, ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native'
 import React from 'react'
 import LinearGradient from 'react-native-linear-gradient'
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
-const services = [
-  {
-    img : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80',
-    text: "Get Your Kundli",
-    subtitle: "Personalized Vedic Horoscope",
-    banner: "Most Popular"
-  },
-  {
-    img : 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80',
-    text: "Book a Pooja",
-    subtitle: "Book Rituals & Ceremonies",
-    banner: "New"
-  },
-  {
-    img : 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80',
-    text: "Panchang",
-    subtitle: "Know about your day",
-    banner: "Recommended"
-  },
-  {
-    img : 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80',
-    text: "Match Making",
-    subtitle: "Check Compatibility Instantly",
-    banner: "Trending"
-  }
-];
-
-const ServiceCard = ({ img, text, subtitle, banner }) => (
-  <View style={styles.cardContainer}>
-    <Image
-      source={{ uri: img }}
-      style={styles.cardImage}
-      resizeMode="cover"
-    />
-    {/* Banner on top left */}
-    <View style={styles.bannerContainer}>
-      <LinearGradient
-        colors={['#ffb347', '#ff5e62']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.bannerGradient}
-      >
-        <Text style={styles.bannerText}>{banner}</Text>
-      </LinearGradient>
-    </View>
-    <LinearGradient
-      colors={['transparent', '#4B2067ee']}
-      start={{ x: 0.2, y: 0 }}
-      end={{ x: 1, y: 0 }}
-      style={styles.gradientOverlay}
-    >
-      <View style={styles.textContainer}>
-        <Text style={styles.cardText}>{text}</Text>
-        <Text
-          style={styles.cardSubtitle}
-          numberOfLines={1}
-          ellipsizeMode="tail"
-        >
-          {subtitle}
-        </Text>
-      </View>
-    </LinearGradient>
-  </View>
-);
-
-const ServiceTab = () => {
+const ServiceTab = ({setActiveIndex}) => {
+  const navigation = useNavigation()
   return (
     <View style={{ flex: 1, backgroundColor: '#f9f7fc' }}>
       <ScrollView contentContainerStyle={{ padding: 16 }}>
-        {services.map((service, idx) => (
-          <ServiceCard
-            key={idx}
-            img={service.img}
-            text={service.text}
-            subtitle={service.subtitle}
-            banner={service.banner}
+        {/* Hardcoded all cards, no mapping, no navigation */}
+        <TouchableOpacity onPress={()=>setActiveIndex('Kundli')} style={styles.cardContainer} activeOpacity={0.85}>
+          <Image
+            source={{ uri: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80' }}
+            style={styles.cardImage}
+            resizeMode="cover"
           />
-        ))}
+          <View style={styles.bannerContainer}>
+            <LinearGradient
+              colors={['#ffb347', '#ff5e62']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.bannerGradient}
+            >
+              <Text style={styles.bannerText}>Most Popular</Text>
+            </LinearGradient>
+          </View>
+          <LinearGradient
+            colors={['transparent', '#4B2067ee']}
+            start={{ x: 0.2, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.gradientOverlay}
+          >
+            <View style={styles.textContainer}>
+              <Text style={styles.cardText}>Get Your Kundli</Text>
+              <Text
+                style={styles.cardSubtitle}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                Personalized Vedic Horoscope
+              </Text>
+            </View>
+          </LinearGradient>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={()=>setActiveIndex('Pooja')} style={styles.cardContainer} activeOpacity={0.85}>
+          <Image
+            source={{ uri: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80' }}
+            style={styles.cardImage}
+            resizeMode="cover"
+          />
+          <View style={styles.bannerContainer}>
+            <LinearGradient
+              colors={['#ffb347', '#ff5e62']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.bannerGradient}
+            >
+              <Text style={styles.bannerText}>New</Text>
+            </LinearGradient>
+          </View>
+          <LinearGradient
+            colors={['transparent', '#4B2067ee']}
+            start={{ x: 0.2, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.gradientOverlay}
+          >
+            <View style={styles.textContainer}>
+              <Text style={styles.cardText}>Book a Pooja</Text>
+              <Text
+                style={styles.cardSubtitle}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                Book Rituals & Ceremonies
+              </Text>
+            </View>
+          </LinearGradient>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={()=>navigation.navigate('Panchang')} style={styles.cardContainer} activeOpacity={0.85}>
+          <Image
+            source={{ uri: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80' }}
+            style={styles.cardImage}
+            resizeMode="cover"
+          />
+          <View style={styles.bannerContainer}>
+            <LinearGradient
+              colors={['#ffb347', '#ff5e62']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.bannerGradient}
+            >
+              <Text style={styles.bannerText}>Recommended</Text>
+            </LinearGradient>
+          </View>
+          <LinearGradient
+            colors={['transparent', '#4B2067ee']}
+            start={{ x: 0.2, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.gradientOverlay}
+          >
+            <View style={styles.textContainer}>
+              <Text style={styles.cardText}>Panchang</Text>
+              <Text
+                style={styles.cardSubtitle}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                Know about your day
+              </Text>
+            </View>
+          </LinearGradient>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={()=>setActiveIndex('Kundli')} style={styles.cardContainer} activeOpacity={0.85}>
+          <Image
+            source={{ uri: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80' }}
+            style={styles.cardImage}
+            resizeMode="cover"
+          />
+          <View style={styles.bannerContainer}>
+            <LinearGradient
+              colors={['#ffb347', '#ff5e62']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.bannerGradient}
+            >
+              <Text style={styles.bannerText}>Trending</Text>
+            </LinearGradient>
+          </View>
+          <LinearGradient
+            colors={['transparent', '#4B2067ee']}
+            start={{ x: 0.2, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.gradientOverlay}
+          >
+            <View style={styles.textContainer}>
+              <Text style={styles.cardText}>Match Making</Text>
+              <Text
+                style={styles.cardSubtitle}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                Check Compatibility Instantly
+              </Text>
+            </View>
+          </LinearGradient>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   )

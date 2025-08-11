@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState, useMemo } from 'react';
 import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, Dimensions } from 'react-native';
-
+import { MagnifyingGlassIcon } from 'react-native-heroicons/outline'; // <-- Import search icon
 
 // Responsive utility functions
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -79,36 +79,6 @@ const astrologers = [
 ];
 
 // AstrologerCard component for rendering each astrologer card
-// const fakeAstrologerCard = ({  }) => {
-//   return (
-//     <View style={styles.cardContainer}>
-//       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-//         <Image source={{ uri: '' }} style={styles.avatar} />
-//         <View style={styles.expTextContainer}>
-//           <Text style={styles.expText}> yrs exp</Text>
-//         </View>
-//       </View>
-//       <View style={styles.cardInfo}>
-     
-//         <View style={styles.nameRow}>
-//           <Text style={styles.name}></Text>
-//         </View>
-//         <Text style={styles.expertise} numberOfLines={1} ellipsizeMode="tail">
-         
-//         </Text>
-       
-//         <Text style={styles.details}>
-         
-//         </Text>
-       
-//         <View style={styles.priceChatRow}>
-//           <Text style={styles.price}></Text>
-//           <Text style={[styles.rating]}></Text>
-//         </View>
-//       </View>
-//     </View>
-//   );
-// };
 const AstrologerCard = ({ astrologer , navigation }) => {
   return (
     <TouchableOpacity onPress={()=>navigation.navigate('AstroProfile')} activeOpacity={0.95} style={styles.cardContainer}>
@@ -119,18 +89,15 @@ const AstrologerCard = ({ astrologer , navigation }) => {
         </View>
       </View>
       <View style={styles.cardInfo}>
-     
         <View style={styles.nameRow}>
           <Text style={styles.name}>{astrologer.name}</Text>
         </View>
         <Text style={styles.expertise} numberOfLines={1} ellipsizeMode="tail">
           {astrologer.expertise.join(', ')}
         </Text>
-       
         <Text style={styles.details}>
           {astrologer.languages.join(', ')}
         </Text>
-       
         <View style={styles.priceChatRow}>
           <Text style={styles.price}>₹{astrologer.pricePerMin}/min</Text>
           <Text style={[styles.rating]}>⭐ {astrologer.rating}</Text>
@@ -163,7 +130,8 @@ const SpecializationItem = ({ item, selected, onPress }) => (
 
 const ChatTab = () => {
   const [selectedSpec, setSelectedSpec] = useState("All");
-  const navigation  = useNavigation()
+  const navigation  = useNavigation();
+
   // const [isLoading,setIsLoadidng] = useState(null)
 
   const filteredAstrologers = useMemo(() => {
@@ -177,23 +145,34 @@ const ChatTab = () => {
     );
   }, [selectedSpec]);
 
+  
+
   return (
     <View style={styles.chatCont}>
-      <View style={styles.topSelector}>
-        <FlatList
-          data={specilazation}
-          horizontal
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <SpecializationItem
-              item={item}
-              selected={item === selectedSpec}
-              onPress={() => setSelectedSpec(item)}
-            />
-          )}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: moderateScale(10) }}
-        />
+      <View style={styles.topSelectorRow}>
+        <TouchableOpacity
+          style={styles.searchIconButton}
+          onPress={()=>navigation.navigate('SearchAstro')}
+          activeOpacity={0.7}
+        >
+          <MagnifyingGlassIcon size={28} color="#82428f" />
+        </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+          <FlatList
+            data={specilazation}
+            horizontal
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <SpecializationItem
+                item={item}
+                selected={item === selectedSpec}
+                onPress={() => setSelectedSpec(item)}
+              />
+            )}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 0 }}
+          />
+        </View>
       </View>
       <View style={{ flex: 1 }}>
         <FlatList
@@ -230,12 +209,33 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: 'white',
   },
-  topSelector: {
-    position: 'static',
-    top: '0',
+  // New style for row containing search icon and specialization list
+  topSelectorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingTop: verticalScale(2),
     paddingBottom: verticalScale(2),
     backgroundColor: '#f9f7fc',
+    paddingHorizontal: moderateScale(10),
+  },
+  // Hide old topSelector padding
+  topSelector: {
+    display: 'none',
+  },
+  searchIconButton: {
+    marginRight: moderateScale(10),
+    padding: moderateScale(6),
+    borderRadius: moderateScale(20),
+    backgroundColor: '#f2e6fa',
+    alignItems: 'center',
+    justifyContent: 'center',
+    // Shadow for iOS
+    shadowColor: '#82428f',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.13,
+    shadowRadius: 4,
+    // Shadow for Android
+    elevation: 3,
   },
   specializationItem: {
     paddingVertical: verticalScale(5),

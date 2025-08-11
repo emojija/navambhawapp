@@ -1,6 +1,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+        <!-- For picking images -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+          <!-- If you also want to pick videos -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+
+         <!-- If you want to pick audio -->
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
+        <!-- for camera permission  -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
 
     <application
       android:name=".MainApplication"

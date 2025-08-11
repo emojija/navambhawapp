@@ -2,18 +2,26 @@ import React from 'react';
 import {  View,  Text,  Image,  StatusBar,  StyleSheet,  Dimensions,  Platform,  TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {  HomeIcon,  ChatBubbleLeftIcon,  GlobeAltIcon,  BookOpenIcon,  InboxArrowDownIcon,  PlusCircleIcon,  UserIcon,  WalletIcon } from 'react-native-heroicons/outline';
+import {  HomeIcon as HomeIconSolid,  ChatBubbleLeftIcon as ChatBubbleLeftIconSolid,  GlobeAltIcon as GlobeAltIconSolid,  BookOpenIcon as BookOpenIconSolid,  InboxArrowDownIcon as InboxArrowDownIconSolid,  ArrowLeftOnRectangleIcon } from 'react-native-heroicons/solid';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { DrawerActions } from '@react-navigation/native';
 
-import {  HomeIcon,  ChatBubbleLeftIcon,  GlobeAltIcon,  BookOpenIcon,  InboxArrowDownIcon,  MagnifyingGlassIcon,  PlusCircleIcon, UserIcon,  WalletIcon } from 'react-native-heroicons/outline';
-import { HomeIcon as HomeIconSolid, ChatBubbleLeftIcon as ChatBubbleLeftIconSolid, GlobeAltIcon as GlobeAltIconSolid, BookOpenIcon as BookOpenIconSolid, InboxArrowDownIcon as InboxArrowDownIconSolid } from 'react-native-heroicons/solid';
-
-// Import your tab screens
+// Tab screens
 import HomeTab from '../Components/UserMiniCompo/HomeTab';
 import AstrologerChatTab from '../Components/UserMiniCompo/AstrologerChatTab';
 import PoojaTab from '../Components/UserMiniCompo/PoojaTab';
 import KundliTab from '../Components/UserMiniCompo/KundliTab';
 import ServiceTab from '../Components/UserMiniCompo/ServiceTab';
+// SideDrawer Tabs 
+import Wallet from '../Components/UserMiniCompo/Wallet';
+import ChatCallHistory from '../Components/UserMiniCompo/ChatCallHistory';
+import EditProfile from '../Components/UserMiniCompo/EditProfile';
+import ChangePassword from '../Components/UserMiniCompo/ChangePassword';
 
-// Screen dimensions
+
+
+// Dimensions
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BASE_DIM = Math.min(SCREEN_WIDTH, SCREEN_HEIGHT);
 const IMAGE_SIZE = Math.round(BASE_DIM * 0.14);
@@ -22,24 +30,37 @@ const WALLET_ICON_SIZE = ICON_SIZE;
 const Money = 100;
 const USER_IMAGE = 'https://randomuser.me/api/portraits/men/32.jpg';
 
-// Font scaling helper
-const scaleFont = (size) => {
+// Font scaling
+const scaleFont = size => {
   const scale = Math.min(SCREEN_WIDTH / 375, SCREEN_HEIGHT / 667);
   return Math.round(size * scale);
 };
 
-// Top bar component
+// Top bar
 const TopBar = ({ navigation }) => (
-  <SafeAreaView edges={['top', 'left', 'right']} style={{ backgroundColor: '#FFE7FA' }}>
+  <SafeAreaView
+    edges={['top', 'left', 'right']}
+    style={{ backgroundColor: '#FFE7FA' }}
+  >
     <StatusBar barStyle="dark-content" backgroundColor="#fff" />
     <View style={styles.topBar}>
-      {/* Left - Profile */}
       <View style={styles.topLeft}>
         <View
-          style={[styles.imgCont, { width: IMAGE_SIZE, height: IMAGE_SIZE, borderRadius: IMAGE_SIZE / 2 }]}
+          style={[
+            styles.imgCont,
+            {
+              width: IMAGE_SIZE,
+              height: IMAGE_SIZE,
+              borderRadius: IMAGE_SIZE / 2,
+            },
+          ]}
         >
           <Image
-            style={{ width: IMAGE_SIZE, height: IMAGE_SIZE, borderRadius: IMAGE_SIZE / 2 }}
+            style={{
+              width: IMAGE_SIZE,
+              height: IMAGE_SIZE,
+              borderRadius: IMAGE_SIZE / 2,
+            }}
             source={{ uri: USER_IMAGE }}
             resizeMode="cover"
           />
@@ -50,8 +71,7 @@ const TopBar = ({ navigation }) => (
         </View>
       </View>
 
-      {/* Right - Money, Search, Profile */}
-       <View style={styles.topRight}>
+      <View style={styles.topRight}>
         <View style={styles.moneyBox}>
           <Text style={styles.money}>Rs {Money}</Text>
           {Money < 100 ? (
@@ -59,58 +79,98 @@ const TopBar = ({ navigation }) => (
           ) : (
             <WalletIcon color="purple" size={WALLET_ICON_SIZE} />
           )}
-        </View> 
-
-        {/* <TouchableOpacity
-          onPress={() => navigation.navigate('SearchAstro')}
-          style={styles.profileBox}
-        >
-          <MagnifyingGlassIcon color="purple" size={ICON_SIZE} />
-        </TouchableOpacity> */}
-
-        <View style={styles.profileBox}>
-          <UserIcon color="purple" size={ICON_SIZE} />
         </View>
+
+        <TouchableOpacity style={styles.profileBox} onPress={() => {}}>
+          <ArrowLeftOnRectangleIcon color="purple" size={ICON_SIZE} />
+        </TouchableOpacity>
+        {/* User button opens drawer */}
+        <TouchableOpacity
+          style={styles.profileBox}
+          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+        >
+          <UserIcon color="purple" size={ICON_SIZE} />
+        </TouchableOpacity>
       </View>
     </View>
   </SafeAreaView>
 );
 
-// Bottom tab navigator
+// Bottom Tabs
 const Tab = createBottomTabNavigator();
-
-export default function UserHomeScreen() {
+function BottomTabs() {
   return (
- 
-      <Tab.Navigator
-        screenOptions={({ route, navigation }) => ({
-          header: () => <TopBar navigation={navigation} />, // custom top bar
-          tabBarActiveTintColor: '#580A46',
-          tabBarInactiveTintColor: '#454545',
-          animationEnabled: true,
-          tabBarIcon: ({ color, size, focused }) => {
-            switch (route.name) {
-              case 'Home':
-                return focused ? <HomeIconSolid color={color} size={size} /> : <HomeIcon color={color} size={size} />;
-              case 'Kundli':
-                return focused ? <BookOpenIconSolid color={color} size={size} /> : <BookOpenIcon color={color} size={size} />;
-              case 'Talk':
-                return focused ? <ChatBubbleLeftIconSolid color={color} size={size} /> : <ChatBubbleLeftIcon color={color} size={size} />;
-              case 'Pooja':
-                return focused ? <GlobeAltIconSolid color={color} size={size} /> : <GlobeAltIcon color={color} size={size} />;
-              case 'Services':
-                return focused ? <InboxArrowDownIconSolid color={color} size={size} /> : <InboxArrowDownIcon color={color} size={size} />;
-            }
-          },
-        })}
-      >
-        <Tab.Screen name="Home" component={HomeTab} />
-        <Tab.Screen name="Kundli" component={KundliTab} />
-        <Tab.Screen name="Talk" component={AstrologerChatTab} />
-        <Tab.Screen name="Pooja" component={PoojaTab} />
-        <Tab.Screen name="Services" component={ServiceTab} />
-      </Tab.Navigator>
-   
+    <Tab.Navigator
+      screenOptions={({ route, navigation }) => ({
+        header: () => <TopBar navigation={navigation} />,
+        tabBarActiveTintColor: '#580A46',
+        tabBarInactiveTintColor: '#454545',
+        animationEnabled: true,
+        tabBarIcon: ({ color, size, focused }) => {
+          switch (route.name) {
+            case 'Home':
+              return focused ? (
+                <HomeIconSolid color={color} size={size} />
+              ) : (
+                <HomeIcon color={color} size={size} />
+              );
+            case 'Kundli':
+              return focused ? (
+                <BookOpenIconSolid color={color} size={size} />
+              ) : (
+                <BookOpenIcon color={color} size={size} />
+              );
+            case 'Talk':
+              return focused ? (
+                <ChatBubbleLeftIconSolid color={color} size={size} />
+              ) : (
+                <ChatBubbleLeftIcon color={color} size={size} />
+              );
+            case 'Pooja':
+              return focused ? (
+                <GlobeAltIconSolid color={color} size={size} />
+              ) : (
+                <GlobeAltIcon color={color} size={size} />
+              );
+            case 'Services':
+              return focused ? (
+                <InboxArrowDownIconSolid color={color} size={size} />
+              ) : (
+                <InboxArrowDownIcon color={color} size={size} />
+              );
+          }
+        },
+      })}
+    >
+      <Tab.Screen name="Home" component={HomeTab} />
+      <Tab.Screen name="Kundli" component={KundliTab} />
+      <Tab.Screen name="Talk" component={AstrologerChatTab} />
+      <Tab.Screen name="Pooja" component={PoojaTab} />
+      <Tab.Screen name="Services" component={ServiceTab} />
+    </Tab.Navigator>
+  );
+}
+
+// Drawer
+const Drawer = createDrawerNavigator();
+export default function App() {
+  return (
+    <Drawer.Navigator
+      screenOptions={{
+        drawerPosition: 'right',
+        headerShown: false,
+      }}
+    >
+      <Drawer.Screen
+        name="HomeTabs"
+        component={BottomTabs}
+        options={{ title: 'Home' }}
+      />
+      <Drawer.Screen name="Wallet" component={Wallet} />
+      <Drawer.Screen name="Chat & Call History" component={ChatCallHistory} />
+      <Drawer.Screen name="Edit Profile" component={EditProfile} />
+      <Drawer.Screen name="Change Password" component={ChangePassword} />
+    </Drawer.Navigator>
   );
 }
 

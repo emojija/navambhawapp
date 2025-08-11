@@ -51,7 +51,7 @@ const TopBar = ({ navigation }) => (
       </View>
 
       {/* Right - Money, Search, Profile */}
-      <View style={styles.topRight}>
+       <View style={styles.topRight}>
         <View style={styles.moneyBox}>
           <Text style={styles.money}>Rs {Money}</Text>
           {Money < 100 ? (
@@ -59,14 +59,14 @@ const TopBar = ({ navigation }) => (
           ) : (
             <WalletIcon color="purple" size={WALLET_ICON_SIZE} />
           )}
-        </View>
+        </View> 
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => navigation.navigate('SearchAstro')}
           style={styles.profileBox}
         >
           <MagnifyingGlassIcon color="purple" size={ICON_SIZE} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <View style={styles.profileBox}>
           <UserIcon color="purple" size={ICON_SIZE} />
@@ -165,10 +165,10 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   profileBox: {
-    // borderWidth: 1,
-    // borderColor: '#580A46',
+    borderWidth: 2,
+    borderColor: '#580a4654',
     borderRadius: 25,
-    // backgroundColor: '#7a7a7a22',
+    backgroundColor: '#ffffff33',
     padding: SCREEN_WIDTH * 0.01,
     justifyContent: 'center',
     alignItems: 'center',

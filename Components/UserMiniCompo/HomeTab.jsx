@@ -2,9 +2,8 @@ import {  StyleSheet,  Text, View, Dimensions, Image, FlatList, Platform, Scroll
 import React, { useEffect, useState } from 'react';
 import { MagnifyingGlassIcon, LockClosedIcon } from 'react-native-heroicons/outline';
 import { LinearGradient } from 'react-native-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-
 
 // Responsive utility for font size and spacing
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -55,8 +54,6 @@ const ASTROLOGERS = [
     image: 'https://randomuser.me/api/portraits/men/78.jpg',
   },
 ];
-
-
 
 // Card for Astrologer and Pandit (shared style and logic)
 const PersonCard = ({ item ,navigation }) => {
@@ -122,9 +119,9 @@ const PoojaCard = ({ item , navigation }) => {
   );
 };
 
-const HomeTab = ({setActiveIndex}) => {
+const HomeTab = ({navigation}) => {
   const[poojaCard,setPoojaCard] = useState([])
-  const navigation = useNavigation()
+  
   // Accept navigation from props or useNavigation as fallback
    
   // for calling pooja api 
@@ -201,7 +198,7 @@ const HomeTab = ({setActiveIndex}) => {
         <View style={styles.serviceCard}>
           <Text style={styles.serviceText}>Free Services</Text>
           <View style={styles.innService}>
-            <TouchableOpacity activeOpacity={0.95} onPress={()=>setActiveIndex('Kundli')} style={styles.card}>
+            <TouchableOpacity activeOpacity={0.95} onPress={()=>navigation.navigate('Kundli')} style={styles.card}>
               <Image
                 style={styles.cardImg}
                 source={{
@@ -242,7 +239,7 @@ const HomeTab = ({setActiveIndex}) => {
         <View style={styles.astroCont}>
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: moderateScale(2)}}>
             <Text style={styles.astrologer}>Astrologer</Text>
-            <TouchableWithoutFeedback onPress={() => setActiveIndex('Talk')}>
+            <TouchableWithoutFeedback onPress={() => navigation.navigate('Talk')}>
               <View>
                 <Text style={styles.seeMoreText}>See more</Text>
               </View>
@@ -282,7 +279,7 @@ const HomeTab = ({setActiveIndex}) => {
                 <Text style={styles.cardText}>Pandits</Text>
               </View>
             </View>
-            <TouchableOpacity  activeOpacity={0.95} onPress={()=>setActiveIndex('Pooja')} style={styles.card}>
+            <TouchableOpacity  activeOpacity={0.95} onPress={()=>navigation.navigate('Pooja')} style={styles.card}>
               <Image
                 style={styles.cardImg}
                 source={{
@@ -306,7 +303,7 @@ const HomeTab = ({setActiveIndex}) => {
         <View style={styles.panditCont}>
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: moderateScale(2)}}>
             <Text style={styles.astrologer}>Pooja</Text>
-            <TouchableWithoutFeedback onPress={() => setActiveIndex('Pooja')}>
+            <TouchableWithoutFeedback onPress={() => navigation.navigate('Pooja')}>
               <View>
                 <Text style={styles.seeMoreText}>See more</Text>
               </View>

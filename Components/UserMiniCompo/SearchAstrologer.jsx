@@ -67,8 +67,8 @@ const verticalScale = size => (SCREEN_HEIGHT / guidelineBaseHeight) * size;
 const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor;
 
 // Card component for astrologer
-const AstrologerCard = ({ astrologer }) => (
-    <TouchableOpacity activeOpacity={0.8}>
+const AstrologerCard = ({ astrologer , navigation }) => (
+    <TouchableOpacity onPress={()=>navigation.navigate('AstroProfile')} activeOpacity={0.8}>
   <View style={styles.card}>
     <View style={styles.cardLeft}>
       <Image source={{ uri: astrologer.image }} style={styles.cardImage} />
@@ -149,7 +149,7 @@ const SearchAstrologer = ({navigation}) => {
             filteredAstrologers.length > 0 ? (
               <ScrollView contentContainerStyle={styles.cardsContainer}>
                 {filteredAstrologers.map(astrologer => (
-                  <AstrologerCard astrologer={astrologer} key={astrologer.id} />
+                  <AstrologerCard astrologer={astrologer} navigation={navigation} key={astrologer.id} />
                 ))}
               </ScrollView>
             ) : (

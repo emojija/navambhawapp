@@ -21,6 +21,7 @@ const BLUE = '#2563EB';
 const RED = '#EF4444';
 const WHITE = '#FFF';
 const GRAY = '#666';
+const GOLD = '#FFD700';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,7 +31,7 @@ const AstrologerProfile = ({ navigation }) => {
       <SafeAreaView style={styles.safeArea}>
         <StatusBar
           barStyle="light-content"
-          backgroundColor='white'
+          backgroundColor={PURPLE}
           translucent={false}
           hidden={false}
         />
@@ -57,12 +58,14 @@ const AstrologerProfile = ({ navigation }) => {
                 source={{ uri: astrologer.image }}
                 style={styles.profileImage}
               />
+              <View style={styles.ratingBadge}>
+                <Text style={styles.ratingBadgeText}>⭐ {astrologer.rating}</Text>
+              </View>
             </View>
             <Text style={styles.nameText}>{astrologer.name}</Text>
             <View style={styles.ratingRow}>
-              <Text style={styles.ratingText}>⭐ {astrologer.rating}</Text>
               <Text style={styles.experienceText}>
-                • {astrologer.experience} yrs exp
+                {astrologer.experience} yrs experience
               </Text>
             </View>
             <View style={styles.expertiseRow}>
@@ -100,13 +103,13 @@ const AstrologerProfile = ({ navigation }) => {
         {/* Chat and Call Buttons at Bottom */}
         <SafeAreaView style={styles.bottomSafeArea}>
           <View style={styles.bottomBar}>
-            <TouchableOpacity style={styles.chatBtn} activeOpacity={0.8}>
+            <TouchableOpacity style={styles.actionBtn} activeOpacity={0.85}>
               <ChatBubbleBottomCenterIcon color={WHITE} size={24} />
-              <Text style={styles.chatBtnText}>Chat</Text>
+              <Text style={styles.actionBtnText}>Chat</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.callBtn} activeOpacity={0.8}>
+            <TouchableOpacity style={[styles.actionBtn, styles.callActionBtn]} activeOpacity={0.85}>
               <PhoneIcon color={WHITE} size={24} />
-              <Text style={styles.callBtnText}>Call</Text>
+              <Text style={styles.actionBtnText}>Call</Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -125,7 +128,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: PURPLE,
-    paddingTop: Platform.OS === 'android' ? 24 : 0, // fallback for Android notch
+    paddingTop: Platform.OS === 'android' ? 24 : 0,
   },
   topBar: {
     flexDirection: 'row',
@@ -134,7 +137,6 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     paddingBottom: 10,
     backgroundColor: PURPLE,
-    // No justifyContent, keep left-aligned
   },
   backBtn: {
     flexDirection: 'row',
@@ -142,7 +144,6 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 2,
     borderRadius: 20,
-    // backgroundColor: 'rgba(255,255,255,0.08)',
   },
   profileTitle: {
     color: WHITE,
@@ -169,9 +170,14 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 6 },
     elevation: 8,
-    borderRadius: 60,
+    borderRadius: 70,
     backgroundColor: WHITE,
     marginBottom: 2,
+    width: 140,
+    height: 140,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
   },
   profileImage: {
     width: 120,
@@ -181,63 +187,88 @@ const styles = StyleSheet.create({
     borderColor: PURPLE,
     backgroundColor: WHITE,
   },
+  ratingBadge: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    backgroundColor: '#ffffff',
+    borderWidth:1,
+    borderColor: PURPLE,
+    borderRadius: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    elevation: 2,
+    shadowColor: GOLD,
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  ratingBadgeText: {
+    color: PURPLE,
+    fontWeight: 'bold',
+    fontSize: 15,
+    letterSpacing: 0.2,
+  },
   nameText: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: 'bold',
     color: PURPLE,
-    marginTop: 16,
+    marginTop: 18,
     marginBottom: 4,
     letterSpacing: 0.5,
+    textShadowColor: 'rgba(108,46,181,0.08)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
-  },
-  ratingText: {
-    fontSize: 17,
-    color: '#FFD700',
-    fontWeight: 'bold',
-    marginRight: 8,
+    marginTop: 2,
   },
   experienceText: {
-    fontSize: 15,
+    fontSize: 16,
     color: GRAY,
-    fontWeight: '500',
+    fontWeight: '600',
+    letterSpacing: 0.2,
   },
   expertiseRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    marginTop: 8,
+    marginTop: 10,
   },
   expertiseBadge: {
-    backgroundColor: PURPLE,
+    backgroundColor: '#E9D5FF',
     borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
     margin: 4,
     elevation: 1,
+    borderWidth: 1,
+    borderColor: PURPLE,
   },
   expertiseBadgeText: {
-    color: WHITE,
-    fontSize: 14,
-    fontWeight: '500',
+    color: PURPLE,
+    fontSize: 15,
+    fontWeight: '600',
     letterSpacing: 0.2,
   },
   infoRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: 20,
-    marginHorizontal: 10,
+    justifyContent: 'space-between',
+    marginVertical: 22,
+    marginHorizontal: 16,
+    gap: 10,
   },
   infoBox: {
     backgroundColor: WHITE,
-    borderRadius: 16,
-    paddingVertical: 14,
-    paddingHorizontal: 18,
+    borderRadius: 18,
+    paddingVertical: 16,
+    paddingHorizontal: 14,
     alignItems: 'center',
-    minWidth: width * 0.27,
+    flex: 1,
+    marginHorizontal: 4,
     elevation: 3,
     shadowColor: PURPLE,
     shadowOpacity: 0.10,
@@ -246,8 +277,8 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     color: PURPLE,
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '700',
     marginBottom: 2,
     letterSpacing: 0.2,
   },
@@ -260,8 +291,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 22,
     marginTop: 12,
     backgroundColor: WHITE,
-    borderRadius: 20,
-    padding: 20,
+    borderRadius: 22,
+    padding: 22,
     elevation: 2,
     shadowColor: PURPLE,
     shadowOpacity: 0.08,
@@ -270,15 +301,15 @@ const styles = StyleSheet.create({
   },
   aboutTitle: {
     color: PURPLE,
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: 'bold',
     marginBottom: 8,
     letterSpacing: 0.2,
   },
   aboutText: {
     color: GRAY,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 15.5,
+    lineHeight: 23,
     fontWeight: '400',
   },
   bottomSafeArea: {
@@ -287,49 +318,42 @@ const styles = StyleSheet.create({
   bottomBar: {
     backgroundColor: LIGHT_PURPLE,
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical:10,
-    paddingBottom: 25,
-    // borderTopLeftRadius: 18,
-    // borderTopRightRadius: 18,
+    paddingVertical: 12,
+    paddingBottom: 28,
+    paddingHorizontal: 18,
+    // borderTopLeftRadius: 24,
+    // borderTopRightRadius: 24,
     elevation: 10,
     shadowColor: PURPLE,
     shadowOpacity: 0.12,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: -2 },
-    marginBottom: Platform.OS === 'ios' ? 0 : 0, // SafeAreaView handles iOS, Android is fine
+    marginBottom: Platform.OS === 'ios' ? 0 : 0,
+    gap: 16,
   },
-  chatBtn: {
+  actionBtn: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: BLUE,
-    paddingVertical: 13,
-    paddingHorizontal: 38,
+    paddingVertical: 15,
     borderRadius: 30,
-    marginHorizontal: 8,
+    marginHorizontal: 0,
+    marginRight: 8,
     elevation: 2,
+    justifyContent: 'center',
+    gap: 8,
   },
-  chatBtnText: {
-    color: WHITE,
-    fontSize: 17,
-    fontWeight: 'bold',
-    marginLeft: 8,
-    letterSpacing: 0.5,
-  },
-  callBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  callActionBtn: {
     backgroundColor: RED,
-    paddingVertical: 13,
-    paddingHorizontal: 38,
-    borderRadius: 30,
-    marginHorizontal: 8,
-    elevation: 2,
+    marginLeft: 8,
+    marginRight: 0,
   },
-  callBtnText: {
+  actionBtnText: {
     color: WHITE,
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 8,
     letterSpacing: 0.5,

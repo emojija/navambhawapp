@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState, useMemo } from 'react';
 import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { MagnifyingGlassIcon } from 'react-native-heroicons/outline'; // <-- Import search icon
+import { MagnifyingGlassIcon } from 'react-native-heroicons/outline';
 
 // Responsive utility functions
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -81,7 +81,11 @@ const astrologers = [
 // AstrologerCard component for rendering each astrologer card
 const AstrologerCard = ({ astrologer , navigation }) => {
   return (
-    <TouchableOpacity onPress={()=>navigation.navigate('AstroProfile')} activeOpacity={0.95} style={styles.cardContainer}>
+    <TouchableOpacity
+      onPress={() => navigation.navigate('AstroProfile')}
+      activeOpacity={0.95}
+      style={styles.cardContainer}
+    >
       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Image source={{ uri: astrologer.image }} style={styles.avatar} />
         <View style={styles.expTextContainer}>
@@ -132,8 +136,6 @@ const ChatTab = () => {
   const [selectedSpec, setSelectedSpec] = useState("All");
   const navigation  = useNavigation();
 
-  // const [isLoading,setIsLoadidng] = useState(null)
-
   const filteredAstrologers = useMemo(() => {
     if (selectedSpec === "All") return astrologers;
     // Remove spaces and lowercase for comparison
@@ -145,17 +147,15 @@ const ChatTab = () => {
     );
   }, [selectedSpec]);
 
-  
-
   return (
     <View style={styles.chatCont}>
       <View style={styles.topSelectorRow}>
         <TouchableOpacity
           style={styles.searchIconButton}
-          onPress={()=>navigation.navigate('SearchAstro')}
+          onPress={() => navigation.navigate('SearchAstro')}
           activeOpacity={0.7}
         >
-          <MagnifyingGlassIcon size={28} color="#82428f" />
+          <MagnifyingGlassIcon size={scale(24)} color="#82428f" />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <FlatList
@@ -182,9 +182,10 @@ const ChatTab = () => {
           renderItem={({ item }) => <AstrologerCard astrologer={item} navigation={navigation} />}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            paddingHorizontal: moderateScale(10),
-            paddingVertical: verticalScale(8),
-            paddingBottom: verticalScale(20)
+            paddingHorizontal: moderateScale(6),
+            paddingVertical: verticalScale(6),
+            paddingBottom: verticalScale(16),
+            alignItems: 'center',
           }}
           ListEmptyComponent={
             <View style={{ alignItems: 'center', marginTop: 40 }}>
@@ -201,6 +202,8 @@ const ChatTab = () => {
 
 export default ChatTab;
 
+const CARD_MAX_WIDTH = Math.min(370, SCREEN_WIDTH * 0.95);
+
 const styles = StyleSheet.create({
   chatCont: {
     position: 'relative',
@@ -216,15 +219,15 @@ const styles = StyleSheet.create({
     paddingTop: verticalScale(2),
     paddingBottom: verticalScale(2),
     backgroundColor: '#f9f7fc',
-    paddingHorizontal: moderateScale(10),
+    paddingHorizontal: moderateScale(6),
   },
   // Hide old topSelector padding
   topSelector: {
     display: 'none',
   },
   searchIconButton: {
-    marginRight: moderateScale(10),
-    padding: moderateScale(6),
+    marginRight: moderateScale(8),
+    padding: moderateScale(5),
     borderRadius: moderateScale(20),
     backgroundColor: '#f2e6fa',
     alignItems: 'center',
@@ -238,12 +241,12 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   specializationItem: {
-    paddingVertical: verticalScale(5),
-    paddingHorizontal: moderateScale(16),
+    paddingVertical: verticalScale(4),
+    paddingHorizontal: moderateScale(12),
     backgroundColor: '#f2e6fa',
     borderRadius: moderateScale(20),
-    marginRight: moderateScale(10),
-    marginVertical: verticalScale(8),
+    marginRight: moderateScale(8),
+    marginVertical: verticalScale(6),
     // Shadow for iOS
     shadowColor: '#82428f',
     shadowOffset: { width: 0, height: 2 },
@@ -255,35 +258,37 @@ const styles = StyleSheet.create({
   specializationText: {
     color: '#82428f',
     fontWeight: '600',
-    fontSize: scale(15),
+    fontSize: scale(14),
     letterSpacing: 0.2,
   },
   cardContainer: {
     flexDirection: 'row',
     backgroundColor: '#fff',
-    borderRadius: moderateScale(16),
-    padding: moderateScale(14),
-    marginBottom: verticalScale(14),
+    borderRadius: moderateScale(13),
+    padding: moderateScale(10),
+    marginBottom: verticalScale(10),
     alignItems: 'center',
-    borderTopWidth: 10,
+    borderTopWidth: 4, // Reduced from 10
     borderTopColor: '#1dc243',
     // Shadow for iOS
     shadowColor: '#82428f',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.10,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 5,
     // Shadow for Android
-    elevation: 4,
-    width: '100%',
-    minHeight: verticalScale(110),
+    elevation: 2,
+    width: '98%',
+    maxWidth: CARD_MAX_WIDTH,
+    minHeight: verticalScale(80),
     position: 'relative',
+    alignSelf: 'center',
   },
   avatar: {
-    width: scale(64),
-    height: scale(64),
-    borderRadius: scale(32),
-    marginRight: moderateScale(16),
-    borderWidth: 2,
+    width: scale(48),
+    height: scale(48),
+    borderRadius: scale(24),
+    marginRight: moderateScale(10),
+    borderWidth: 1.5,
     borderColor: '#e5d0f7',
     backgroundColor: '#eee',
   },
@@ -295,41 +300,40 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: verticalScale(2),
+    marginBottom: verticalScale(1),
     width: '100%',
   },
   name: {
-    fontSize: scale(18),
+    fontSize: scale(15),
     fontWeight: '700',
     color: '#4B2067',
     letterSpacing: 0.2,
     flexShrink: 1,
   },
   rating: {
-    // fontSize is now set dynamically in the component
     color: '#ffb300',
     fontWeight: '600',
-    marginLeft: moderateScale(8),
+    marginLeft: moderateScale(6),
     backgroundColor: '#fff7e6',
-    paddingHorizontal: moderateScale(8),
-    paddingVertical: verticalScale(2),
-    borderRadius: moderateScale(8),
+    paddingHorizontal: moderateScale(6),
+    paddingVertical: verticalScale(1),
+    borderRadius: moderateScale(7),
     overflow: 'hidden',
-    fontSize:20,
+    fontSize: scale(15),
     marginBottom: 0,
   },
   expertise: {
-    fontSize: scale(14),
+    fontSize: scale(12.5),
     color: '#82428f',
     fontWeight: '500',
-    marginBottom: verticalScale(2),
+    marginBottom: verticalScale(1),
     letterSpacing: 0.1,
     maxWidth: '95%',
   },
   details: {
-    fontSize: scale(13),
+    fontSize: scale(11.5),
     color: '#6c5b7b',
-    marginBottom: verticalScale(4),
+    marginBottom: verticalScale(2),
     fontWeight: '400',
     letterSpacing: 0.1,
   },
@@ -338,17 +342,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    marginTop: verticalScale(4),
+    marginTop: verticalScale(2),
   },
   price: {
-    fontSize: scale(14),
+    fontSize: scale(12.5),
     color: '#82428f',
     fontWeight: '600',
-    marginLeft: moderateScale(8),
+    marginLeft: moderateScale(6),
     backgroundColor: '#f3e6fa',
-    paddingHorizontal: moderateScale(18),
-    paddingVertical: verticalScale(8),
-    borderRadius: moderateScale(8),
+    paddingHorizontal: moderateScale(12),
+    paddingVertical: verticalScale(5),
+    borderRadius: moderateScale(7),
     overflow: 'hidden',
     marginBottom: 0,
     textAlign: 'center',
@@ -374,17 +378,17 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   expTextContainer: {
-    width: scale(64),
+    width: scale(48),
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: verticalScale(4),
+    marginTop: verticalScale(2),
   },
   expText: {
     backgroundColor: 'transparent',
     color: '#82428f',
     fontWeight: '500',
-    fontSize: scale(12),
-    borderRadius: moderateScale(6),
+    fontSize: scale(10),
+    borderRadius: moderateScale(5),
     paddingHorizontal: 0,
     paddingVertical: 0,
     textAlign: 'center',

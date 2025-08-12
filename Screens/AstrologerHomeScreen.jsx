@@ -13,7 +13,7 @@ import Chats from '../Components/AstrologerMiniCompo/Chats';
 
 // Side bar 
 import EditProfile from '../Components/AstrologerMiniCompo/EditProfile';
-import Updates from '../Components/AstrologerMiniCompo/updates';
+import Updates from '../Components/AstrologerMiniCompo/Updates';
 import WalletDetails from '../Components/AstrologerMiniCompo/WalletDetails';
 import EditExperience from '../Components/AstrologerMiniCompo/EditExperience';
 

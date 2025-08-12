@@ -1,16 +1,20 @@
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, Dimensions, ScrollView, Platform, PixelRatio } from 'react-native';
 
 // Responsive utility functions
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const guidelineBaseWidth = 375;
 const guidelineBaseHeight = 667;
 
-const scale = size => (SCREEN_WIDTH / guidelineBaseWidth) * size;
-const verticalScale = size => (SCREEN_HEIGHT / guidelineBaseHeight) * size;
-const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor;
+// Slightly reduce scale for a less "large" look, but still responsive
+const scale = size => (SCREEN_WIDTH / guidelineBaseWidth) * size * 0.93;
+const verticalScale = size => (SCREEN_HEIGHT / guidelineBaseHeight) * size * 0.93;
+const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor * 0.93;
+
+// For font scaling, use PixelRatio for better cross-platform font sizing
+const fontScale = size => size * PixelRatio.getFontScale() * (SCREEN_WIDTH / guidelineBaseWidth) * 0.93;
 
 const specilazation = [
   "All",
@@ -37,7 +41,7 @@ const FakePoojaCard = () => (
         styles.poojaName,
         {
           backgroundColor: '#f5e9b7',
-          minHeight: 18,
+          minHeight: verticalScale(15),
           borderRadius: 4,
           width: '80%',
           alignSelf: 'center',
@@ -50,7 +54,7 @@ const FakePoojaCard = () => (
         styles.poojaSubtitle,
         {
           backgroundColor: '#f5e9b7',
-          minHeight: 14,
+          minHeight: verticalScale(11),
           borderRadius: 4,
           width: '60%',
           alignSelf: 'center',
@@ -151,7 +155,7 @@ const CallTab = () => {
             />
           )}
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: moderateScale(10) }}
+          contentContainerStyle={{ paddingHorizontal: moderateScale(8) }}
         />
       </View>
       <ScrollView contentContainerStyle={styles.cardsScrollContainer}>
@@ -165,8 +169,8 @@ const CallTab = () => {
                   <PoojaCard key={idx} pooja={item} navigation={navigation} />
                 ))
               : (
-                <View style={{ width: '100%', alignItems: 'center', marginTop: 40 }}>
-                  <Text style={{ color: '#bfa900', fontSize: scale(16), fontWeight: '600' }}>
+                <View style={{ width: '100%', alignItems: 'center', marginTop: verticalScale(30) }}>
+                  <Text style={{ color: '#bfa900', fontSize: fontScale(14), fontWeight: '600' }}>
                     No poojas found for this specialization.
                   </Text>
                 </View>
@@ -191,34 +195,34 @@ const styles = StyleSheet.create({
   topSelector: {
     position: 'static',
     top: '0',
-    paddingTop: verticalScale(2),
-    paddingBottom: verticalScale(2),
+    paddingTop: verticalScale(1),
+    paddingBottom: verticalScale(1),
     backgroundColor: '#f9f7fc',
   },
   specializationItem: {
-    paddingVertical: verticalScale(5),
-    paddingHorizontal: moderateScale(16),
+    paddingVertical: verticalScale(4),
+    paddingHorizontal: moderateScale(12),
     backgroundColor: '#fffbe6', // very light yellow
-    borderRadius: moderateScale(25),
-    marginRight: moderateScale(10),
-    marginVertical: verticalScale(8),
-    borderWidth: 1.5,
+    borderRadius: moderateScale(20),
+    marginRight: moderateScale(7),
+    marginVertical: verticalScale(6),
+    borderWidth: 1.2,
     borderColor: '#ffe066', // dark yellow border
     shadowColor: '#ffe066',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.13,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 1.5 },
+    shadowOpacity: 0.11,
+    shadowRadius: 3,
+    elevation: 2,
   },
   specializationText: {
     color: '#e4b700',
     fontWeight: '600',
-    fontSize: scale(15),
+    fontSize: fontScale(13.5),
     letterSpacing: 0.2,
   },
   cardsScrollContainer: {
-    paddingVertical: verticalScale(8),
-    paddingBottom: verticalScale(20),
+    paddingVertical: verticalScale(6),
+    paddingBottom: verticalScale(14),
     alignItems: 'center',
   },
   cardsGrid: {
@@ -228,61 +232,61 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   poojaCardContainer: {
-    width: SCREEN_WIDTH * 0.42,
-    minHeight: verticalScale(200),
+    width: SCREEN_WIDTH * 0.39,
+    minHeight: verticalScale(170),
     backgroundColor: '#fffef8',
-    borderRadius: moderateScale(20),
+    borderRadius: moderateScale(16),
     alignItems: 'center',
     justifyContent: 'flex-start',
-    padding: moderateScale(14),
-    margin: moderateScale(8),
+    padding: moderateScale(10),
+    margin: moderateScale(6),
     shadowColor: '#ffe066',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.13,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.11,
+    shadowRadius: 7,
+    elevation: 3,
   },
   poojaImage: {
     width: '100%',
-    height: verticalScale(90),
-    borderRadius: moderateScale(14),
-    marginBottom: verticalScale(12),
+    height: verticalScale(70),
+    borderRadius: moderateScale(10),
+    marginBottom: verticalScale(8),
     backgroundColor: '#fffde7',
     resizeMode: 'cover',
   },
   poojaName: {
-    fontSize: scale(16),
+    fontSize: fontScale(13.5),
     fontWeight: '700',
     color: '#000',
     textAlign: 'center',
-    marginBottom: verticalScale(4),
+    marginBottom: verticalScale(2),
     letterSpacing: 0.2,
   },
   poojaSubtitle: {
-    fontSize: scale(13),
+    fontSize: fontScale(11.5),
     color: '#555',
     textAlign: 'center',
-    marginBottom: verticalScale(12),
+    marginBottom: verticalScale(8),
     fontWeight: '500',
     letterSpacing: 0.1,
   },
   viewDetailsButton: {
     backgroundColor: '#ffe066',
-    borderRadius: moderateScale(10),
-    paddingVertical: verticalScale(8),
-    paddingHorizontal: moderateScale(18),
+    borderRadius: moderateScale(8),
+    paddingVertical: verticalScale(6),
+    paddingHorizontal: moderateScale(13),
     alignItems: 'center',
     marginTop: 'auto',
     shadowColor: '#ffe066',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1.5 },
+    shadowOpacity: 0.13,
+    shadowRadius: 3,
     elevation: 2,
   },
   viewDetailsButtonText: {
     color: '#000',
     fontWeight: '700',
-    fontSize: scale(14),
+    fontSize: fontScale(12.5),
     letterSpacing: 0.5,
   },
 });

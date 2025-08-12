@@ -1,7 +1,16 @@
-import { Image, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View, Dimensions, ScrollView, Platform } from 'react-native'
+import { Image, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View, Dimensions, ScrollView, Platform, PixelRatio } from 'react-native'
 import React from 'react'
 import { ArrowLeftIcon, PhoneIcon } from 'react-native-heroicons/outline'
 import { ChatBubbleBottomCenterIcon } from 'react-native-heroicons/solid'
+
+// Responsive scaling helpers
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const scale = size => (SCREEN_WIDTH / 375) * size;
+const verticalScale = size => (SCREEN_HEIGHT / 812) * size;
+const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor;
+
+// For font scaling
+const fontScale = size => size * PixelRatio.getFontScale() * (SCREEN_WIDTH / 375);
 
 const astrologer = {
     id: '1',
@@ -23,8 +32,6 @@ const WHITE = '#FFF';
 const GRAY = '#666';
 const GOLD = '#FFD700';
 
-const { width, height } = Dimensions.get('window');
-
 const AstrologerProfile = ({ navigation }) => {
   return (
     <View style={styles.container}>
@@ -42,7 +49,7 @@ const AstrologerProfile = ({ navigation }) => {
             onPress={() => navigation && navigation.goBack && navigation.goBack()}
             activeOpacity={0.7}
           >
-            <ArrowLeftIcon color={WHITE} size={28} />
+            <ArrowLeftIcon color={WHITE} size={moderateScale(26)} />
             <Text style={styles.profileTitle}>Profile</Text>
           </TouchableOpacity>
         </View>
@@ -57,6 +64,7 @@ const AstrologerProfile = ({ navigation }) => {
               <Image
                 source={{ uri: astrologer.image }}
                 style={styles.profileImage}
+                resizeMode="cover"
               />
               <View style={styles.ratingBadge}>
                 <Text style={styles.ratingBadgeText}>⭐ {astrologer.rating}</Text>
@@ -104,11 +112,11 @@ const AstrologerProfile = ({ navigation }) => {
         <SafeAreaView style={styles.bottomSafeArea}>
           <View style={styles.bottomBar}>
             <TouchableOpacity style={styles.actionBtn} activeOpacity={0.85}>
-              <ChatBubbleBottomCenterIcon color={WHITE} size={24} />
+              <ChatBubbleBottomCenterIcon color={WHITE} size={moderateScale(22)} />
               <Text style={styles.actionBtnText}>Chat</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.actionBtn, styles.callActionBtn]} activeOpacity={0.85}>
-              <PhoneIcon color={WHITE} size={24} />
+              <PhoneIcon color={WHITE} size={moderateScale(22)} />
               <Text style={styles.actionBtnText}>Call</Text>
             </TouchableOpacity>
           </View>
@@ -128,106 +136,103 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: PURPLE,
-    paddingTop: Platform.OS === 'android' ? 24 : 0,
+    paddingTop: Platform.OS === 'android' ? verticalScale(15) : 0,
   },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingTop: 4,
-    paddingBottom: 10,
+    paddingHorizontal: scale(10),
     backgroundColor: PURPLE,
   },
   backBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 2,
-    borderRadius: 20,
+    paddingVertical: verticalScale(6),
+    paddingHorizontal: scale(2),
+    borderRadius: moderateScale(20),
   },
   profileTitle: {
     color: WHITE,
-    fontSize: 22,
+    fontSize: fontScale(21),
     fontWeight: 'bold',
     letterSpacing: 1,
-    marginLeft: 8,
+    marginLeft: scale(8),
   },
   scrollContent: {
-    paddingBottom: 120,
+    paddingBottom: verticalScale(100),
     backgroundColor: LIGHT_PURPLE,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    minHeight: height * 0.85,
+    minHeight: SCREEN_HEIGHT * 0.88,
   },
   profileSection: {
     alignItems: 'center',
-    marginTop: 28,
-    marginBottom: 18,
+    marginTop: verticalScale(22),
+    marginBottom: verticalScale(14),
   },
   profileImageShadow: {
     shadowColor: PURPLE,
     shadowOpacity: 0.18,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 8,
-    borderRadius: 70,
+    shadowRadius: moderateScale(10),
+    shadowOffset: { width: 0, height: moderateScale(4) },
+    elevation: 6,
+    borderRadius: moderateScale(70),
     backgroundColor: WHITE,
-    marginBottom: 2,
-    width: 140,
-    height: 140,
+    marginBottom: verticalScale(2),
+    width: scale(120),
+    height: scale(120),
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
   },
   profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 4,
+    width: scale(100),
+    height: scale(100),
+    borderRadius: moderateScale(50),
+    borderWidth: 3,
     borderColor: PURPLE,
     backgroundColor: WHITE,
   },
   ratingBadge: {
     position: 'absolute',
-    bottom: 10,
-    right: 10,
+    bottom: scale(6),
+    right: scale(6),
     backgroundColor: '#ffffff',
-    borderWidth:1,
+    borderWidth: 1,
     borderColor: PURPLE,
-    borderRadius: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
+    borderRadius: moderateScale(14),
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(2),
     elevation: 2,
     shadowColor: GOLD,
     shadowOpacity: 0.18,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: moderateScale(3),
+    shadowOffset: { width: 0, height: moderateScale(1) },
   },
   ratingBadgeText: {
     color: PURPLE,
     fontWeight: 'bold',
-    fontSize: 15,
+    fontSize: fontScale(13),
     letterSpacing: 0.2,
   },
   nameText: {
-    fontSize: 28,
+    fontSize: fontScale(24),
     fontWeight: 'bold',
     color: PURPLE,
-    marginTop: 18,
-    marginBottom: 4,
+    marginTop: verticalScale(14),
+    marginBottom: verticalScale(2),
     letterSpacing: 0.5,
     textShadowColor: 'rgba(108,46,181,0.08)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
+    textShadowOffset: { width: 0, height: verticalScale(1.5) },
+    textShadowRadius: moderateScale(3),
+    textAlign: 'center',
   },
   ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
-    marginTop: 2,
+    marginBottom: verticalScale(6),
+    marginTop: verticalScale(2),
   },
   experienceText: {
-    fontSize: 16,
+    fontSize: fontScale(14),
     color: GRAY,
     fontWeight: '600',
     letterSpacing: 0.2,
@@ -236,81 +241,83 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    marginTop: 10,
+    marginTop: verticalScale(8),
   },
   expertiseBadge: {
     backgroundColor: '#E9D5FF',
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    margin: 4,
+    borderRadius: moderateScale(14),
+    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(4),
+    margin: scale(3),
     elevation: 1,
     borderWidth: 1,
     borderColor: PURPLE,
   },
   expertiseBadgeText: {
     color: PURPLE,
-    fontSize: 15,
+    fontSize: fontScale(13),
     fontWeight: '600',
     letterSpacing: 0.2,
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 22,
-    marginHorizontal: 16,
-    gap: 10,
+    marginVertical: verticalScale(16),
+    marginHorizontal: scale(10),
+    gap: scale(6),
   },
   infoBox: {
     backgroundColor: WHITE,
-    borderRadius: 18,
-    paddingVertical: 16,
-    paddingHorizontal: 14,
+    borderRadius: moderateScale(14),
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: scale(8),
     alignItems: 'center',
     flex: 1,
-    marginHorizontal: 4,
-    elevation: 3,
+    marginHorizontal: scale(2),
+    elevation: 2,
     shadowColor: PURPLE,
     shadowOpacity: 0.10,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: moderateScale(3),
+    shadowOffset: { width: 0, height: moderateScale(1) },
   },
   infoLabel: {
     color: PURPLE,
-    fontSize: 15,
+    fontSize: fontScale(13),
     fontWeight: '700',
-    marginBottom: 2,
+    marginBottom: verticalScale(1),
     letterSpacing: 0.2,
   },
   infoValue: {
     color: GRAY,
-    fontSize: 16,
+    fontSize: fontScale(14),
     fontWeight: '500',
+    textAlign: 'center',
   },
   aboutSection: {
-    marginHorizontal: 22,
-    marginTop: 12,
+    marginHorizontal: scale(12),
+    marginTop: verticalScale(8),
     backgroundColor: WHITE,
-    borderRadius: 22,
-    padding: 22,
+    borderRadius: moderateScale(16),
+    padding: scale(14),
     elevation: 2,
     shadowColor: PURPLE,
     shadowOpacity: 0.08,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: moderateScale(3),
+    shadowOffset: { width: 0, height: moderateScale(1) },
   },
   aboutTitle: {
     color: PURPLE,
-    fontSize: 19,
+    fontSize: fontScale(16),
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: verticalScale(4),
     letterSpacing: 0.2,
   },
   aboutText: {
     color: GRAY,
-    fontSize: 15.5,
-    lineHeight: 23,
+    fontSize: fontScale(13.5),
+    lineHeight: fontScale(20),
     fontWeight: '400',
+    textAlign: 'justify',
   },
   bottomSafeArea: {
     backgroundColor: 'transparent',
@@ -320,42 +327,40 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingBottom: 28,
-    paddingHorizontal: 18,
-    // borderTopLeftRadius: 24,
-    // borderTopRightRadius: 24,
-    elevation: 10,
+    paddingVertical: verticalScale(8),
+    paddingBottom: Platform.OS === 'ios' ? verticalScale(18) : verticalScale(10),
+    paddingHorizontal: scale(10),
+    elevation: 8,
     shadowColor: PURPLE,
     shadowOpacity: 0.12,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: -2 },
-    marginBottom: Platform.OS === 'ios' ? 0 : 0,
-    gap: 16,
+    shadowRadius: moderateScale(6),
+    shadowOffset: { width: 0, height: -moderateScale(2) },
+    marginBottom: 0,
+    gap: scale(8),
   },
   actionBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: BLUE,
-    paddingVertical: 15,
-    borderRadius: 30,
+    paddingVertical: verticalScale(10),
+    borderRadius: moderateScale(22),
     marginHorizontal: 0,
-    marginRight: 8,
+    marginRight: scale(4),
     elevation: 2,
     justifyContent: 'center',
-    gap: 8,
+    gap: scale(6),
   },
   callActionBtn: {
     backgroundColor: RED,
-    marginLeft: 8,
+    marginLeft: scale(4),
     marginRight: 0,
   },
   actionBtnText: {
     color: WHITE,
-    fontSize: 18,
+    fontSize: fontScale(15),
     fontWeight: 'bold',
-    marginLeft: 8,
+    marginLeft: scale(6),
     letterSpacing: 0.5,
   },
 })

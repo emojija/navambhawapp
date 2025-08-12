@@ -161,6 +161,25 @@ const AstrologerSignUp = ({ navigation }) => {
               />
             </View>
           </View>
+          
+            {/* OTP Section */}
+            <View style={styles.inputGroup}>
+            <Text style={styles.label}>OTP</Text>
+            <View style={styles.otpRow}>
+              <TextInput
+                style={[styles.input, styles.otpInput, { flex: 1 }]}
+                placeholder="Enter OTP"
+                keyboardType="number-pad"
+                placeholderTextColor={placeholderTextColor}
+                value={formData.otp}
+                onChangeText={value => handleInputChange('otp', value)}
+                maxLength={6}
+              />
+              <TouchableOpacity style={styles.otpBtn} onPress={handleSendOtp}>
+                <Text style={styles.otpBtnText}>Send OTP</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Password</Text>
@@ -183,24 +202,7 @@ const AstrologerSignUp = ({ navigation }) => {
             </View>
           </View>
 
-          {/* OTP Section */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>OTP</Text>
-            <View style={styles.otpRow}>
-              <TextInput
-                style={[styles.input, styles.otpInput, { flex: 1 }]}
-                placeholder="Enter OTP"
-                keyboardType="number-pad"
-                placeholderTextColor={placeholderTextColor}
-                value={formData.otp}
-                onChangeText={value => handleInputChange('otp', value)}
-                maxLength={6}
-              />
-              <TouchableOpacity style={styles.otpBtn} onPress={handleSendOtp}>
-                <Text style={styles.otpBtnText}>Send OTP</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+        
         </View>
 
         {/* Bottom Links and Button */}

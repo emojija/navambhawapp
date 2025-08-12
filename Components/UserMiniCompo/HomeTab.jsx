@@ -163,16 +163,18 @@ const HomeTab = ({navigation}) => {
           activeOpacity={0.8}
           onPress={() => navigation.navigate('SearchAstro')}
         >
-          <Text style={styles.placeholderText}>Search Astrologers, Pandits</Text>
-          <MagnifyingGlassIcon
-            size={moderateScale(25)}
-            color="#757575"
-            style={styles.icon}
-          />
+          <View style={styles.searchBarInner}>
+            <Text style={styles.placeholderText}>Search Astrologers, Pandits</Text>
+            <MagnifyingGlassIcon
+              size={moderateScale(25)}
+              color="#757575"
+              style={styles.searchIcon}
+            />
+          </View>
         </TouchableOpacity>
 
         {/* improved image banner with secure chat text */}
-        <View style={styles.imgcont}>
+        <View style={styles.bannerOuter}>
           <View style={styles.bannerWrapper}>
             <Image
               style={styles.banner}
@@ -181,8 +183,6 @@ const HomeTab = ({navigation}) => {
               }}
               resizeMode="cover"
             />
-          
-            
           </View>
         </View>
 
@@ -237,7 +237,7 @@ const HomeTab = ({navigation}) => {
 
         {/* astrologer card container  */}
         <View style={styles.astroCont}>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: moderateScale(2)}}>
+          <View style={styles.astroTopBar}>
             <Text style={styles.astrologer}>Astrologer</Text>
             <TouchableWithoutFeedback onPress={() => navigation.navigate('Talk')}>
               <View>
@@ -251,9 +251,9 @@ const HomeTab = ({navigation}) => {
               keyExtractor={item => item.id}
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingVertical: 10 }}
+              contentContainerStyle={styles.flatListContent}
               renderItem={({ item }) => <PersonCard item={item} navigation={navigation} />}
-              style={{ minHeight: moderateScale(180) }}
+              style={styles.flatListStyle}
             />
           </View>
         </View>
@@ -301,7 +301,7 @@ const HomeTab = ({navigation}) => {
 
         {/* pandit card container (same style as astrologer card) */}
         <View style={styles.panditCont}>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: moderateScale(2)}}>
+          <View style={styles.astroTopBar}>
             <Text style={styles.astrologer}>Pooja</Text>
             <TouchableWithoutFeedback onPress={() => navigation.navigate('Pooja')}>
               <View>
@@ -315,15 +315,15 @@ const HomeTab = ({navigation}) => {
               keyExtractor={item => item.id}
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingVertical: 10 }}
+              contentContainerStyle={styles.flatListContent}
               renderItem={({ item }) => <PoojaCard item={item} navigation={navigation} />}
-              style={{ minHeight: moderateScale(180) }}
+              style={styles.flatListStyle}
             />
           </View>
         </View>
 
         {/* improved small banner with secure chat text */}
-        <View style={styles.imgcont}>
+        <View style={styles.bannerOuter}>
           <View style={styles.banner1Wrapper}>
             <Image
               source={{
@@ -363,7 +363,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: Platform.OS === 'ios' ? verticalScale(10) : verticalScale(5),
-    paddingHorizontal: moderateScale(10),
     paddingBottom: moderateScale(30),
     minHeight: SCREEN_HEIGHT,
   },
@@ -380,15 +379,36 @@ const styles = StyleSheet.create({
     shadowRadius: 4 * scale(1),
     elevation: 2,
     marginBottom: moderateScale(10),
+    marginHorizontal: moderateScale(8),
   },
-  placeholderText: {
+  searchBarInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     flex: 1,
-    color: '#989898',
-    fontSize: moderateScale(15),
-    fontWeight: '400',
+    width: '100%',
   },
-  icon: {
-    marginLeft: moderateScale(8),
+  searchIcon: {
+    // No inline style, all styling here
+    marginLeft: moderateScale(10),
+  },
+  bannerOuter: {
+    paddingHorizontal: moderateScale(8),
+  },
+  astroTopBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: moderateScale(2),
+    paddingHorizontal: moderateScale(8),
+  },
+  flatListContent: {
+    paddingVertical: 10,
+    paddingLeft: 0,
+    paddingRight: 0,
+  },
+  flatListStyle: {
+    minHeight: moderateScale(180),
   },
   imgcont: {
     marginTop: '5%',
@@ -487,7 +507,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: '1%',
+    marginTop: '5%',
   },
   largeText: {
     paddingVertical: '3%',
@@ -539,6 +559,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 6,
     paddingVertical: '1%',
+    marginHorizontal: moderateScale(8),
   },
   innService: {
     flexDirection: 'row',
@@ -562,6 +583,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 4,
+    marginHorizontal: 0,
+    paddingHorizontal: moderateScale(2), // a little horizontal padding in card
   },
   cardImg: {
     width: '100%',
@@ -592,10 +615,11 @@ const styles = StyleSheet.create({
   // PersonCard styles (shared for astrologer and pandit)
   personCardContainer: {
     alignItems: 'center',
-    marginRight: moderateScale(18),
+   marginHorizontal:moderateScale(5),
     backgroundColor: '#fff',
     borderRadius: moderateScale(12),
     padding: moderateScale(10),
+    paddingHorizontal: moderateScale(6), // a little horizontal padding in card
     shadowColor: '#000',
     shadowOpacity: 0.07,
     shadowOffset: { width: 0, height: 2 },
@@ -611,10 +635,11 @@ const styles = StyleSheet.create({
   // PoojaCard custom style for yellowish tone
   poojaCardContainer: {
     alignItems: 'center',
-    marginRight: moderateScale(18),
+    marginHorizontal: moderateScale(5),
     backgroundColor: '#fffbe6', // light yellowish background
     borderRadius: moderateScale(12),
     padding: moderateScale(10),
+    paddingHorizontal: moderateScale(6), // a little horizontal padding in card
     shadowColor: '#FFD700', // gold/yellow shadow
     shadowOpacity: 0.12,
     shadowOffset: { width: 0, height: 2 },

@@ -19,6 +19,7 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="AstorHome" component={AstrologerHomeScreen} />
         <Stack.Screen name="Landing" component={LandingPage} />
         <Stack.Screen name="SignIn" component={SignInPage} />
         <Stack.Screen name="AstroSignIn" component={AstrologerSignUp} />
@@ -28,7 +29,6 @@ const Navigation = () => {
         <Stack.Screen name="AstroProfile" component={AstrologerProfile} />
         <Stack.Screen name="PoojaInfo" component={PoojaFullInfo} />
         <Stack.Screen name="Panchang" component={Panchang} />
-        <Stack.Screen name="AstorHome" component={AstrologerHomeScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>

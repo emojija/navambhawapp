@@ -11,7 +11,7 @@ const Updates = ({}) => {
     <View style={{ flex: 1, backgroundColor: '#f9f7fc' }}>
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {/* Hardcoded all cards, no mapping, no navigation */}
-        <TouchableOpacity onPress={()=>navigation.navigate('Kundli')} style={styles.cardContainer} activeOpacity={0.85}>
+        <TouchableOpacity onPress={()=>navigation.navigate('KundliAstro')} style={styles.cardContainer} activeOpacity={0.85}>
           <Image
             source={{ uri: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80' }}
             style={styles.cardImage}
@@ -46,7 +46,7 @@ const Updates = ({}) => {
           </LinearGradient>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={()=>navigation.navigate('Pooja')} style={styles.cardContainer} activeOpacity={0.85}>
+        <TouchableOpacity onPress={()=>navigation.navigate('PoojaAstro')} style={styles.cardContainer} activeOpacity={0.85}>
           <Image
             source={{ uri: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80' }}
             style={styles.cardImage}
@@ -116,7 +116,7 @@ const Updates = ({}) => {
           </LinearGradient>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={()=>navigation.navigate('Kundli')} style={styles.cardContainer} activeOpacity={0.85}>
+        <TouchableOpacity onPress={()=>navigation.navigate('KundliAstro')} style={styles.cardContainer} activeOpacity={0.85}>
           <Image
             source={{ uri: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80' }}
             style={styles.cardImage}

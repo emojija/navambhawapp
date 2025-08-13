@@ -1,10 +1,26 @@
 import React, { useState } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, StyleSheet, ScrollView, ImageBackground } from "react-native";
+import {
+  View,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+  StyleSheet,
+  ImageBackground,
+  Platform,
+  useWindowDimensions,
+  ScrollView,
+} from "react-native";
 import { LineChart } from "react-native-gifted-charts";
 
-const screenWidth = Dimensions.get("window").width;
+// Responsive utility for scaling
+const guidelineBaseWidth = 375; // iPhone X width
+const guidelineBaseHeight = 812; // iPhone X height
+
+const scale = (size, width) => (width / guidelineBaseWidth) * size;
+const verticalScale = (size, height) => (height / guidelineBaseHeight) * size;
 
 const Dashboard = () => {
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const totalEarnings = 12500;
   const availableBalance = 3200;
   const [filter, setFilter] = useState("Month");
@@ -44,15 +60,138 @@ const Dashboard = () => {
     ],
   };
 
-  // Calculate chart width based on data length to enable horizontal scrolling
+  // Chart width for horizontal scroll
   const getChartWidth = () => {
     // Minimum width is screenWidth - 36, but for more data points, increase width
-    const baseSpacing = 60; // Increase for more space per point
-    const minWidth = screenWidth - 36;
+    const baseSpacing = scale(60, screenWidth); // Responsive spacing
+    const minWidth = screenWidth - scale(36, screenWidth);
     const dataLength = chartData[filter].length;
-    const calculatedWidth = dataLength * baseSpacing + 40; // 40 for initialSpacing
+    const calculatedWidth = dataLength * baseSpacing + scale(40, screenWidth); // 40 for initialSpacing
     return Math.max(minWidth, calculatedWidth);
   };
+
+  // Responsive chart height
+  const getChartHeight = () => {
+    // Use a fraction of the screen height, but not too tall
+    return Math.min(verticalScale(260, screenHeight), 0.35 * screenHeight);
+  };
+
+  // Responsive styles
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#F8F4FF',
+      paddingHorizontal: scale(12, screenWidth),
+      paddingTop: verticalScale(18, screenHeight),
+      paddingBottom: verticalScale(10, screenHeight),
+      justifyContent: 'flex-start',
+    },
+    balanceRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: verticalScale(16, screenHeight),
+      gap: scale(10, screenWidth),
+    },
+    balanceCard: {
+      flex: 1,
+      backgroundColor: '#fff',
+      borderRadius: scale(14, screenWidth),
+      paddingVertical: verticalScale(18, screenHeight),
+      paddingHorizontal: scale(10, screenWidth),
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: '#F3E6F9',
+      minWidth: 0,
+    },
+    label: {
+      fontSize: scale(14, screenWidth),
+      color: '#7B1FA2',
+      fontWeight: '600',
+      letterSpacing: 0.2,
+      marginBottom: verticalScale(2, screenHeight),
+    },
+    amount: {
+      fontSize: scale(22, screenWidth),
+      fontWeight: 'bold',
+      color: '#4A148C',
+      letterSpacing: 0.5,
+    },
+    shadow: {
+      shadowColor: '#7B1FA2',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: Platform.OS === 'ios' ? 0.08 : 0.15,
+      shadowRadius: 6,
+      elevation: 3,
+    },
+    chartSection: {
+      width: '100%',
+      alignItems: 'center',
+      marginBottom: verticalScale(18, screenHeight),
+    },
+    chartCard: {
+      width: '100%',
+      backgroundColor: '#fff',
+      borderRadius: scale(10, screenWidth),
+      borderWidth: 1,
+      borderColor: '#E1BEE7',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: scale(10, screenWidth),
+      minHeight: getChartHeight() + verticalScale(60, screenHeight),
+    },
+    filterContainer: {
+      flexDirection: "row",
+      justifyContent: "center",
+      marginBottom: verticalScale(8, screenHeight),
+      gap: scale(6, screenWidth),
+    },
+    filterButton: {
+      paddingHorizontal: scale(10, screenWidth),
+      paddingVertical: verticalScale(6, screenHeight),
+      borderRadius: scale(8, screenWidth),
+      backgroundColor: "#ddd",
+      marginHorizontal: scale(2, screenWidth),
+    },
+    activeFilter: { backgroundColor: "#3498db" },
+    filterText: { fontSize: scale(13, screenWidth), color: "#333" },
+    activeFilterText: { color: "#fff", fontWeight: "bold" },
+
+    // Banner styles
+    bannerContainer: {
+      marginBottom: verticalScale(5, screenHeight),
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+    },
+    bannerImage: {
+      width: '100%',
+      maxWidth: scale(400, screenWidth),
+      height: verticalScale(150, screenHeight),
+      borderRadius: scale(12, screenWidth),
+      overflow: 'hidden',
+      alignSelf: 'center',
+      justifyContent: 'center',
+    },
+    bannerImageStyle: {
+      borderRadius: scale(12, screenWidth),
+    },
+    bannerOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.25)',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    bannerText: {
+      color: '#fff',
+      fontSize: scale(18, screenWidth),
+      fontWeight: 'bold',
+      textAlign: 'center',
+      textShadowColor: 'rgba(0,0,0,0.4)',
+      textShadowOffset: { width: 0, height: 2 },
+      textShadowRadius: 4,
+      letterSpacing: 0.5,
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -86,41 +225,41 @@ const Dashboard = () => {
             ))}
           </View>
 
-          {/* Line Chart - Gifted Charts with horizontal scroll */}
+          {/* Line Chart - Scrollable in X axis */}
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 10 }}
+            contentContainerStyle={{ paddingBottom: verticalScale(10, screenHeight) }}
           >
             <LineChart
               data={chartData[filter]}
               curved
               width={getChartWidth()}
-              height={350}
+              height={getChartHeight()}
               thickness={2}
               color="#3498db"
               hideRules={false}
               yAxisColor="#ccc"
               xAxisColor="#ccc"
-              yAxisTextStyle={{ color: '#333' }}
+              yAxisTextStyle={{ color: '#333', fontSize: scale(12, screenWidth) }}
               xAxisLabelTextStyle={{
                 color: '#333',
-                fontSize: 15,
+                fontSize: scale(13, screenWidth),
               }}
-              initialSpacing={20}
-              spacing={60} // Match baseSpacing for consistent scroll
+              initialSpacing={scale(20, screenWidth)}
+              spacing={scale(60, screenWidth)} // Responsive, matches getChartWidth
               hideDataPoints={false}
-              dataPointsHeight={6}
-              dataPointsWidth={6}
+              dataPointsHeight={scale(6, screenWidth)}
+              dataPointsWidth={scale(6, screenWidth)}
               dataPointsColor="#36194f"
               startFillColor="rgba(52, 152, 219, 0.3)"
               endFillColor="rgba(52, 152, 219, 0.05)"
               startOpacity={0.9}
               endOpacity={0.2}
               xAxisLabelTexts={chartData[filter].map(item => item.label)}
-              xAxisLabelWidth={60}
+              xAxisLabelWidth={scale(60, screenWidth)}
               xAxisLabelRotation={0}
-              xAxisLabelsVerticalShift={10}
+              xAxisLabelsVerticalShift={scale(10, screenWidth)}
             />
           </ScrollView>
         </View>
@@ -146,105 +285,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F8F4FF',
-    paddingHorizontal: 18,
-    paddingTop: 24,
-  },
-  balanceRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  balanceCard: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    paddingVertical: 24,
-    paddingHorizontal: 18,
-    marginHorizontal: 6,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#F3E6F9',
-  },
-  label: {
-    fontSize: 15,
-    color: '#7B1FA2',
-    fontWeight: '600',
-    // marginBottom: 8,
-    letterSpacing: 0.2,
-  },
-  amount: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4A148C',
-    letterSpacing: 0.5,
-  },
-  shadow: {
-    shadowColor: '#7B1FA2',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  chartSection: {
-    flex: 1,
-    justifyContent: 'flex-start',
-  },
-  chartCard: {
-    // flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#E1BEE7',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // marginBottom: 18,
-    padding: 13,
-    // minHeight: 0, // Increased minHeight for more space
-  },
-  filterContainer: { flexDirection: "row", justifyContent: "center", marginBottom: 10 },
-  filterButton: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8, backgroundColor: "#ddd", marginHorizontal: 5 },
-  activeFilter: { backgroundColor: "#3498db" },
-  filterText: { fontSize: 14, color: "#333" },
-  activeFilterText: { color: "#fff", fontWeight: "bold" },
-
-  // Banner styles
-  bannerContainer: {
-    // marginTop: 1,
-    marginBottom: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bannerImage: {
-    width: '100%',
-    maxWidth: 400,
-    height: 120,
-    borderRadius: 14,
-    overflow: 'hidden',
-    alignSelf: 'center',
-    justifyContent: 'center',
-  },
-  bannerImageStyle: {
-    borderRadius: 14,
-  },
-  bannerOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.25)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bannerText: {
-    color: '#fff',
-    fontSize: 22,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    textShadowColor: 'rgba(0,0,0,0.4)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-    letterSpacing: 0.5,
-  },
-});

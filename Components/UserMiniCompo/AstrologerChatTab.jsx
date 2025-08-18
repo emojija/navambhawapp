@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState, useMemo } from 'react';
+import axios from 'axios';
+import React, { useState, useMemo, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { MagnifyingGlassIcon } from 'react-native-heroicons/outline';
 
@@ -13,7 +14,6 @@ const verticalScale = size => (SCREEN_HEIGHT / guidelineBaseHeight) * size;
 const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor;
 
 const specilazation = [
-  "All",
   "Vedic Astrology",
   "Vastu",
   "Tarot",
@@ -25,86 +25,36 @@ const specilazation = [
   "kundli"
 ];
 
-const astrologers = [
-  {
-    id: '1',
-    name: 'Priya Sharma',
-    image: 'https://randomuser.me/api/portraits/women/44.jpg',
-    expertise: ['Vedic Astrology', 'Tarot', 'Numerology'],
-    experience: 8,
-    languages: ['Hindi', 'English'],
-    pricePerMin: 25,
-    rating: 4.7,
-  },
-  {
-    id: '2',
-    name: 'Rahul Verma',
-    image: 'https://randomuser.me/api/portraits/men/32.jpg',
-    expertise: ['Palmistry', 'Vastu'],
-    experience: 12,
-    languages: ['Hindi', 'English', 'Punjabi'],
-    pricePerMin: 30,
-    rating: 4.9,
-  },
-  {
-    id: '3',
-    name: 'Sneha Kapoor',
-    image: 'https://randomuser.me/api/portraits/women/65.jpg',
-    expertise: ['Reiki', 'Lal Kitab', 'KP Astrology'],
-    experience: 6,
-    languages: ['English', 'Marathi'],
-    pricePerMin: 20,
-    rating: 4.5,
-  },
-  {
-    id: '4',
-    name: 'Amit Joshi',
-    image: 'https://randomuser.me/api/portraits/men/76.jpg',
-    expertise: ['Vedic Astrology', 'Kundli', 'Numerology'],
-    experience: 10,
-    languages: ['Hindi', 'Gujarati'],
-    pricePerMin: 28,
-    rating: 4.8,
-  },
-  {
-    id: '5',
-    name: 'Meera Desai',
-    image: 'https://randomuser.me/api/portraits/women/22.jpg',
-    expertise: ['Tarot', 'Vastu', 'Palmistry'],
-    experience: 7,
-    languages: ['English', 'Hindi', 'Bengali'],
-    pricePerMin: 22,
-    rating: 4.6,
-  },
-];
+
 
 // AstrologerCard component for rendering each astrologer card
-const AstrologerCard = ({ astrologer , navigation }) => {
+const AstrologerCard = ({ astrologer , navigation  }) => {
+  
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('AstroProfile')}
+      onPress={() => navigation.navigate('AstroProfile',{astroData:astrologer})}
       activeOpacity={0.95}
       style={styles.cardContainer}
     >
       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Image source={{ uri: astrologer.image }} style={styles.avatar} />
+        <Image source={{ uri: `${astrologer.profileImage}` }} style={styles.avatar} />
         <View style={styles.expTextContainer}>
           <Text style={styles.expText}>{astrologer.experience} yrs exp</Text>
         </View>
       </View>
       <View style={styles.cardInfo}>
         <View style={styles.nameRow}>
-          <Text style={styles.name}>{astrologer.name}</Text>
+          <Text style={styles.name}>{astrologer.username}</Text>
         </View>
         <Text style={styles.expertise} numberOfLines={1} ellipsizeMode="tail">
-          {astrologer.expertise.join(', ')}
+          {typeof astrologer.specialization === 'string' ? astrologer.specialization : ''}
         </Text>
         <Text style={styles.details}>
-          {astrologer.languages.join(', ')}
+          {astrologer.languages}
         </Text>
         <View style={styles.priceChatRow}>
-          <Text style={styles.price}>₹{astrologer.pricePerMin}/min</Text>
-          <Text style={[styles.rating]}>⭐ {astrologer.rating}</Text>
+          <Text style={styles.price}>₹{astrologer.price}/min</Text>
+          <Text style={[styles.rating]}>⭐ {Number(astrologer.average_rating).toFixed(2)}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -133,19 +83,50 @@ const SpecializationItem = ({ item, selected, onPress }) => (
 );
 
 const ChatTab = () => {
-  const [selectedSpec, setSelectedSpec] = useState("All");
+  const [selectedSpec, setSelectedSpec] = useState();
   const navigation  = useNavigation();
+  const [astroCard,setAstroCard] =  useState([])
 
-  const filteredAstrologers = useMemo(() => {
-    if (selectedSpec === "All") return astrologers;
-    // Remove spaces and lowercase for comparison
-    const selectedKey = selectedSpec.replace(/\s/g, '').toLowerCase();
-    return astrologers.filter(ast =>
-      ast.expertise.some(exp =>
-        exp.replace(/\s/g, '').toLowerCase().includes(selectedKey)
-      )
-    );
-  }, [selectedSpec]);
+  useEffect(() => {
+    const fetchAstrologers = async () => {
+      // setIsLoading(true);
+      try {
+        const res = await axios.get('https://backend.navambhaw.com/v1/fetchastrologers');
+        if (res.status === 200 && Array.isArray(res.data?.data)) {
+          setAstroCard(res.data.data);
+        
+          console.log(res.data.data)
+        } else {
+          setAstroCard([]);
+          console.warn('Unexpected response structure:', res.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch poojas:', error);
+        setAstroCard([]);
+      } finally {
+        // setIsLoading(false);
+       
+      }
+    };
+    fetchAstrologers();
+  }, []);
+
+  // const filteredAstrologers = useMemo(() => {
+  //   if (!selectedSpec) return astroCard;
+  //   // Remove spaces and lowercase for comparison
+  //   const selectedKey = selectedSpec.replace(/\s/g, '').toLowerCase();
+  //   return astroCard.filter(ast => {
+  //     if (typeof ast.specilazation === 'string') {
+  //       // Split by comma, trim, and check if any matches
+  //       return ast.specilazation
+  //         .split(',')
+  //         .some(exp =>
+  //           exp.replace(/\s/g, '').toLowerCase().includes(selectedKey)
+  //         );
+  //     }
+  //     return false;
+  //   });
+  // }, [selectedSpec, astroCard]);
 
   return (
     <View style={styles.chatCont}>
@@ -176,10 +157,10 @@ const ChatTab = () => {
       </View>
       <View style={{ flex: 1 }}>
         <FlatList
-          data={filteredAstrologers}
+          data={astroCard}
           horizontal={false}
           keyExtractor={item => item.id}
-          renderItem={({ item }) => <AstrologerCard astrologer={item} navigation={navigation} />}
+          renderItem={({ item }) => <AstrologerCard  astrologer={item} navigation={navigation} />}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingHorizontal: moderateScale(6),

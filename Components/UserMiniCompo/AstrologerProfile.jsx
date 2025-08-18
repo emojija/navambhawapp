@@ -12,18 +12,6 @@ const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * fact
 // For font scaling
 const fontScale = size => size * PixelRatio.getFontScale() * (SCREEN_WIDTH / 375);
 
-const astrologer = {
-    id: '1',
-    name: 'Priya Sharma',
-    image: 'https://randomuser.me/api/portraits/women/44.jpg',
-    expertise: ['Vedic Astrology', 'Tarot', 'Numerology'],
-    experience: 8,
-    languages: ['Hindi', 'English'],
-    pricePerMin: 25,
-    rating: 4.7,
-    about: 'Priya Sharma is a highly experienced astrologer with over 8 years of expertise in Vedic Astrology, Tarot, and Numerology. She is known for her compassionate approach, deep insights, and accurate predictions. Priya has helped countless clients find clarity and direction in their lives through her guidance.',
-};
-
 const PURPLE = '#6C2EB5';
 const LIGHT_PURPLE = '#F3E8FF';
 const BLUE = '#2563EB';
@@ -32,7 +20,10 @@ const WHITE = '#FFF';
 const GRAY = '#666';
 const GOLD = '#FFD700';
 
-const AstrologerProfile = ({ navigation }) => {
+const AstrologerProfile = ({ navigation , route }) => {
+  const { astroData } = route.params;
+  // console.log(astroData, 'data after load') // Remove noisy log
+
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -62,26 +53,24 @@ const AstrologerProfile = ({ navigation }) => {
           <View style={styles.profileSection}>
             <View style={styles.profileImageShadow}>
               <Image
-                source={{ uri: astrologer.image }}
+                source={{ uri: `${astroData.profileImage}` }}
                 style={styles.profileImage}
                 resizeMode="cover"
               />
               <View style={styles.ratingBadge}>
-                <Text style={styles.ratingBadgeText}>⭐ {astrologer.rating}</Text>
+                <Text style={styles.ratingBadgeText}>⭐ {Number(astroData.average_rating).toFixed(1)}</Text>
               </View>
             </View>
-            <Text style={styles.nameText}>{astrologer.name}</Text>
-            <View style={styles.ratingRow}>
-              <Text style={styles.experienceText}>
-                {astrologer.experience} yrs experience
-              </Text>
-            </View>
+            <Text style={styles.nameText}>{astroData.username}</Text>
+           
             <View style={styles.expertiseRow}>
-              {astrologer.expertise.map((exp, idx) => (
-                <View key={idx} style={styles.expertiseBadge}>
-                  <Text style={styles.expertiseBadgeText}>{exp}</Text>
-                </View>
-              ))}
+              {astroData.specialization && typeof astroData.specialization === 'string'
+                ? astroData.specialization.split(',').map((exp, idx) => (
+                    <View key={idx} style={styles.expertiseBadge}>
+                      <Text style={styles.expertiseBadgeText}>{exp.trim()}</Text>
+                    </View>
+                  ))
+                : null}
             </View>
           </View>
 
@@ -89,22 +78,28 @@ const AstrologerProfile = ({ navigation }) => {
           <View style={styles.infoRow}>
             <View style={styles.infoBox}>
               <Text style={styles.infoLabel}>Languages</Text>
-              <Text style={styles.infoValue}>{astrologer.languages.join(', ')}</Text>
+              <Text style={styles.infoValue}>
+                {Array.isArray(astroData.languages)
+                  ? astroData.languages.join(', ')
+                  : typeof astroData.languages === 'string'
+                  ? astroData.languages
+                  : ''}
+              </Text>
             </View>
             <View style={styles.infoBox}>
               <Text style={styles.infoLabel}>Experience</Text>
-              <Text style={styles.infoValue}>{astrologer.experience} yrs</Text>
+              <Text style={styles.infoValue}>{astroData.experience} yrs</Text>
             </View>
             <View style={styles.infoBox}>
               <Text style={styles.infoLabel}>Price</Text>
-              <Text style={styles.infoValue}>₹{astrologer.pricePerMin}/min</Text>
+              <Text style={styles.infoValue}>₹{astroData.price}/min</Text>
             </View>
           </View>
 
           {/* About */}
           <View style={styles.aboutSection}>
             <Text style={styles.aboutTitle}>About</Text>
-            <Text style={styles.aboutText}>{astrologer.about}</Text>
+            <Text style={styles.aboutText}>{astroData.description}</Text>
           </View>
         </ScrollView>
 
@@ -188,6 +183,7 @@ const styles = StyleSheet.create({
     height: scale(100),
     borderRadius: moderateScale(50),
     borderWidth: 3,
+    objectFit:'fill',
     borderColor: PURPLE,
     backgroundColor: WHITE,
   },

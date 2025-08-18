@@ -11,6 +11,7 @@ const SignInPage = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [Phone, setPhone] = useState("");
   const [Password, setPassword] = useState("");
+  const [loginData,setLoginData]= useState({})
 
   const handleTogglePassword = () => {
     setShowPassword((prev) => !prev);
@@ -23,8 +24,10 @@ const SignInPage = ({ navigation }) => {
         { Phone, Password }
       );
       if (response.status === 200) {
-        navigation.replace('UserHome');
         console.log('Login successful:', response.data);
+        setLoginData(response.data.user)
+        const user = response.data.user
+        navigation.replace('UserHome',{loginUser : user});
       } else {
         console.error('Login failed: Unexpected response status', response.status);
       }

@@ -1,61 +1,11 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Platform, Dimensions, StatusBar, Image, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ArrowLeftIcon, XMarkIcon } from 'react-native-heroicons/outline'
 import { SafeAreaView } from 'react-native-safe-area-context';
+import axios from 'axios';
 
 // Astrologer data
-const astrologers = [
-  {
-    id: '1',
-    name: 'Priya Sharma',
-    image: 'https://randomuser.me/api/portraits/women/44.jpg',
-    expertise: ['Vedic Astrology', 'Tarot', 'Numerology'],
-    experience: 8,
-    languages: ['Hindi', 'English'],
-    pricePerMin: 25,
-    rating: 4.7,
-  },
-  {
-    id: '2',
-    name: 'Rahul Verma',
-    image: 'https://randomuser.me/api/portraits/men/32.jpg',
-    expertise: ['Palmistry', 'Vastu'],
-    experience: 12,
-    languages: ['Hindi', 'English', 'Punjabi'],
-    pricePerMin: 30,
-    rating: 4.9,
-  },
-  {
-    id: '3',
-    name: 'Sneha Kapoor',
-    image: 'https://randomuser.me/api/portraits/women/65.jpg',
-    expertise: ['Reiki', 'Lal Kitab', 'KP Astrology'],
-    experience: 6,
-    languages: ['English', 'Marathi'],
-    pricePerMin: 20,
-    rating: 4.5,
-  },
-  {
-    id: '4',
-    name: 'Amit Joshi',
-    image: 'https://randomuser.me/api/portraits/men/76.jpg',
-    expertise: ['Vedic Astrology', 'Kundli', 'Numerology'],
-    experience: 10,
-    languages: ['Hindi', 'Gujarati'],
-    pricePerMin: 28,
-    rating: 4.8,
-  },
-  {
-    id: '5',
-    name: 'Meera Desai',
-    image: 'https://randomuser.me/api/portraits/women/22.jpg',
-    expertise: ['Tarot', 'Vastu', 'Palmistry'],
-    experience: 7,
-    languages: ['English', 'Hindi', 'Bengali'],
-    pricePerMin: 22,
-    rating: 4.6,
-  },
-];
+
 
 // Responsive utility functions
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -68,33 +18,33 @@ const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * fact
 
 // Card component for astrologer
 const AstrologerCard = ({ astrologer , navigation }) => (
-    <TouchableOpacity onPress={()=>navigation.navigate('AstroProfile')} activeOpacity={0.8}>
+    <TouchableOpacity onPress={()=>navigation.navigate('AstroProfile',{astroData:astrologer})} activeOpacity={0.8}>
   <View style={styles.card}>
     <View style={styles.cardLeft}>
-      <Image source={{ uri: astrologer.image }} style={styles.cardImage} />
+      <Image source={{ uri: `${astrologer.profileImage}` }} style={styles.cardImage} />
       <View style={styles.expTextContainer}>
         <Text style={styles.expText}>{astrologer.experience} yrs exp</Text>
       </View>
     </View>
     <View style={styles.cardRight}>
       <View style={styles.nameRow}>
-        <Text style={styles.cardName} numberOfLines={1}>{astrologer.name}</Text>
+        <Text style={styles.cardName} numberOfLines={1}>{astrologer.username}</Text>
         <View style={styles.ratingBox}>
           <Text style={styles.ratingStar}>★</Text>
-          <Text style={styles.ratingText}>{astrologer.rating}</Text>
+          <Text style={styles.ratingText}>{Number(astrologer.average_rating).toFixed(2)}</Text>
         </View>
       </View>
       <View style={styles.row}>
         <Text style={styles.label}>Expertise: </Text>
-        <Text style={styles.value} numberOfLines={1}>{astrologer.expertise.join(', ')}</Text>
+        <Text style={styles.value} numberOfLines={1}>{astrologer.specialization}</Text>
       </View>
       <View style={styles.row}>
         <Text style={styles.label}>Languages: </Text>
-        <Text style={styles.value} numberOfLines={1}>{astrologer.languages.join(', ')}</Text>
+        <Text style={styles.value} numberOfLines={1}>{astrologer.languages}</Text>
       </View>
       <View style={styles.row}>
         <Text style={styles.label}>Price/min: </Text>
-        <Text style={styles.priceValue}>₹{astrologer.pricePerMin}</Text>
+        <Text style={styles.priceValue}>₹{astrologer.price}</Text>
       </View>
     </View>
   </View>
@@ -103,10 +53,35 @@ const AstrologerCard = ({ astrologer , navigation }) => (
 
 const SearchAstrologer = ({navigation}) => {
   const [search, setSearch] = useState('');
+  const [ astroData,setAstroData] = useState([])
+  
+  useEffect(() => {
+    const fetchAstrologers = async () => {
+      
+      try {
+        const res = await axios.get('https://backend.navambhaw.com/v1/fetchastrologers');
+        if (res.status === 200 && Array.isArray(res.data?.data)) {
+          setAstroData(res.data.data);
+        
+          console.log(res.data.data)
+        } else {
+          setAstroData([]);
+          console.warn('Unexpected response structure:', res.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch poojas:', error);
+        setAstroData([]);
+      } finally {
+       
+       
+      }
+    };
+    fetchAstrologers();
+  }, []);
 
   // Filter astrologers by search text (case-insensitive)
-  const filteredAstrologers = astrologers.filter(a =>
-    a.name.toLowerCase().includes(search.trim().toLowerCase())
+  const filteredAstrologers = astroData.filter(a =>
+    a.username.toLowerCase().includes(search.trim().toLowerCase())
   );
 
   const showResults = search.trim().length > 0;

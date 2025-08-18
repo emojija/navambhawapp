@@ -80,7 +80,7 @@ const PoojaCard = ({ pooja ,navigation }) => (
     <Image source={{ uri: `https://backend.navambhaw.com/pooja_image/${pooja.Pooja_image}` }} style={styles.poojaImage} />
     <Text style={styles.poojaName} numberOfLines={2}>{pooja.Pooja_name}</Text>
     <Text style={styles.poojaSubtitle} numberOfLines={2}>{pooja.Title}</Text>
-    <TouchableOpacity onPress={()=>navigation.navigate('PoojaInfo')} style={styles.viewDetailsButton}>
+    <TouchableOpacity onPress={()=>navigation.navigate('PoojaInfo',{poojaData:pooja.id})} style={styles.viewDetailsButton}>
       <Text style={styles.viewDetailsButtonText}>View Details</Text>
     </TouchableOpacity>
   </View>

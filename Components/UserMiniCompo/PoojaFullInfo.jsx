@@ -12,13 +12,14 @@ import {
   Linking,
   Alert,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ArrowLeftIcon,
   ChatBubbleLeftEllipsisIcon,
   PhoneIcon,
 } from 'react-native-heroicons/outline';
 import LinearGradient from 'react-native-linear-gradient';
+import axios from 'axios';
 
 const pooja = {
   id: '1',
@@ -54,7 +55,27 @@ const openWhatsApp = (phone) => {
   );
 };
 
-const PoojaFullInfo = ({ navigation }) => {
+const PoojaFullInfo = ({ navigation , route }) => {
+    const {poojaData }   = route.params;
+    const [pooja,setPooja] = useState({})
+
+    useEffect(() => {
+      const fetchPoojaData = async () => {
+        try {
+          const response = await axios.get(`https://backend.navambhaw.com/v1/poojadata?pooja_id=${poojaData}`);
+          if (response.status === 200 && response.data) {
+            setPooja(response.data.data);
+            console.log("data printed", response.data.data);
+          }
+        } catch (error) {
+          console.log("data not fetched", error);
+        }
+      };
+
+      fetchPoojaData();
+    }, []);
+    
+
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
@@ -73,7 +94,7 @@ const PoojaFullInfo = ({ navigation }) => {
           >
             <ArrowLeftIcon color={'#000'} size={28} />
           </TouchableOpacity>
-          <Text style={styles.titleText}>{pooja.name}</Text>
+          <Text style={styles.titleText}>{pooja.Pooja_name}</Text>
         </View>
 
         <ScrollView
@@ -83,7 +104,7 @@ const PoojaFullInfo = ({ navigation }) => {
           {/* Image with Gradient Overlay */}
           <View style={styles.imageContainer}>
             <Image
-              source={{ uri: pooja.image }}
+              source={{ uri: `https://backend.navambhaw.com/pooja_image/${pooja.Pooja_image}` }}
               style={styles.poojaImage}
               resizeMode="cover"
             />
@@ -100,8 +121,8 @@ const PoojaFullInfo = ({ navigation }) => {
             <View style={styles.imageTextOverlay}>
               {/* Add a semi-transparent background behind the text for extra contrast */}
               <View style={styles.textBackground}>
-                <Text style={styles.poojaName}>{pooja.name}</Text>
-                <Text style={styles.poojaSubtitle}>{pooja.subtitle}</Text>
+                <Text style={styles.poojaName}>{pooja.Type}</Text>
+                <Text style={styles.poojaSubtitle}>{pooja.Mantra}</Text>
               </View>
             </View>
           </View>
@@ -109,7 +130,7 @@ const PoojaFullInfo = ({ navigation }) => {
           {/* About Section */}
           <View style={styles.aboutSectionFullWidth}>
             <Text style={styles.aboutTitle}>About</Text>
-            <Text style={styles.aboutText}>{pooja.about}</Text>
+            <Text style={styles.aboutText}>{pooja.description}</Text>
           </View>
         </ScrollView>
 
@@ -209,6 +230,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 0,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
+    objectFit:'fill'
   },
   gradientOverlay: {
     position: 'absolute',

@@ -15,57 +15,17 @@ const verticalScale = size => (SCREEN_HEIGHT / guidelineBaseHeight) * size;
 const moderateScale = (size, factor = 0.5) =>
   size + (scale(size) - size) * factor;
 
-// FlatList data separated
-const ASTROLOGERS = [
-  {
-    id: '1',
-    name: 'Priya Sharma',
-    amount: '₹20/min',
-    image: 'https://randomuser.me/api/portraits/women/21.jpg',
-  },
-  {
-    id: '2',
-    name: 'Rohan Mehta',
-    amount: '₹25/min',
-    image: 'https://randomuser.me/api/portraits/men/34.jpg',
-  },
-  {
-    id: '3',
-    name: 'Sneha Verma',
-    amount: '₹18/min',
-    image: 'https://randomuser.me/api/portraits/women/45.jpg',
-  },
-  {
-    id: '4',
-    name: 'Amit Singh',
-    amount: '₹22/min',
-    image: 'https://randomuser.me/api/portraits/men/56.jpg',
-  },
-  {
-    id: '5',
-    name: 'Kavita Joshi',
-    amount: '₹19/min',
-    image: 'https://randomuser.me/api/portraits/women/67.jpg',
-  },
-  {
-    id: '6',
-    name: 'Vikram Patel',
-    amount: '₹23/min',
-    image: 'https://randomuser.me/api/portraits/men/78.jpg',
-  },
-];
-
 // Card for Astrologer and Pandit (shared style and logic)
-const PersonCard = ({ item ,navigation }) => {
+const AstroCard = ({ item ,navigation }) => {
   // Show only first 12 characters of name, add "..." if longer
-  let displayName = item.name;
+  let displayName = item.username;
   if (typeof displayName === 'string' && displayName.length > 12) {
     displayName = displayName.slice(0, 12) + '..';
   }
   return (
     <View style={styles.personCardContainer}>
       <Image
-        source={{ uri: item.image }}
+        source={{ uri: `${item.profileImage}` }}
         style={styles.personImage}
         resizeMode="cover"
       />
@@ -75,10 +35,10 @@ const PersonCard = ({ item ,navigation }) => {
         ellipsizeMode="tail"
         adjustsFontSizeToFit={false}
       >
-        {displayName}
+        {displayName} 
       </Text>
-      <Text style={styles.personAmount}>{item.amount}</Text>
-      <TouchableOpacity activeOpacity={0.95} onPress={()=>{navigation.navigate('AstroProfile')}} style={styles.startChatWrapper}>
+      <Text style={styles.personAmount}>₹{item.price}/min</Text>
+      <TouchableOpacity activeOpacity={0.95} onPress={()=>{navigation.navigate('AstroProfile',{astroData : item})}} style={styles.startChatWrapper}>
         <View style={styles.startChatButton}>
           <Text style={styles.startChatText}>View Profile</Text>
         </View>
@@ -109,7 +69,7 @@ const PoojaCard = ({ item , navigation }) => {
       </Text>
       <Text style={styles.personAmount}>{item.Type}</Text>
       <View style={styles.startChatWrapper}>
-        <TouchableOpacity activeOpacity={0.8} onPress={()=>{navigation.navigate('PoojaInfo')}}>
+        <TouchableOpacity activeOpacity={0.8} onPress={()=>{navigation.navigate('PoojaInfo',{poojaData:item.id})}}>
           <View style={styles.poojaStartChatButton}>
             <Text style={styles.poojaStartChatText}>View Details</Text>
           </View>
@@ -121,6 +81,7 @@ const PoojaCard = ({ item , navigation }) => {
 
 const HomeTab = ({navigation}) => {
   const[poojaCard,setPoojaCard] = useState([])
+  const [astroCard,setAstroCard] = useState([])
   
   // Accept navigation from props or useNavigation as fallback
    
@@ -148,6 +109,31 @@ const HomeTab = ({navigation}) => {
     };
     fetchPoojas();
   }, []);
+
+  useEffect(() => {
+    const fetchAstrologers = async () => {
+      // setIsLoading(true);
+      try {
+        const res = await axios.get('https://backend.navambhaw.com/v1/fetchastrologers');
+        if (res.status === 200 && Array.isArray(res.data?.data)) {
+          setAstroCard(res.data.data);
+        
+          console.log(res.data.data)
+        } else {
+          setAstroCard([]);
+          console.warn('Unexpected response structure:', res.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch poojas:', error);
+        setAstroCard([]);
+      } finally {
+        // setIsLoading(false);
+       
+      }
+    };
+    fetchAstrologers();
+  }, []);
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -204,6 +190,7 @@ const HomeTab = ({navigation}) => {
                 source={{
                   uri: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80', // Photo of Earth from space
                 }}
+                resizeMode="cover"
               />
               <LinearGradient
                 colors={['transparent', '#4B006E']}
@@ -221,6 +208,7 @@ const HomeTab = ({navigation}) => {
                 source={{
                   uri: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=800&q=80', // Buddhist monk in orange robe
                 }}
+                resizeMode="cover"
               />
               <LinearGradient
                 colors={['transparent', '#4B006E']}
@@ -247,12 +235,12 @@ const HomeTab = ({navigation}) => {
           </View>
           <View>
             <FlatList
-              data={ASTROLOGERS}
+              data={astroCard}
               keyExtractor={item => item.id}
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.flatListContent}
-              renderItem={({ item }) => <PersonCard item={item} navigation={navigation} />}
+              renderItem={({ item }) => <AstroCard item={item} navigation={navigation} />}
               style={styles.flatListStyle}
             />
           </View>
@@ -268,6 +256,7 @@ const HomeTab = ({navigation}) => {
                 source={{
                   uri: 'https://randomuser.me/api/portraits/men/32.jpg', // Example astrologer image
                 }}
+                resizeMode="cover"
               />
               <LinearGradient
                 colors={['transparent', '#4B006E']}
@@ -285,6 +274,7 @@ const HomeTab = ({navigation}) => {
                 source={{
                   uri: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80', // Diwali/candle themed image (no h/w params)
                 }}
+                resizeMode="cover"
               />
               <LinearGradient
                 colors={['transparent', '#4B006E']}
@@ -590,6 +580,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: verticalScale(80),
     borderRadius: moderateScale(15),
+    // Remove objectFit/resizeMode from here, handled in component
   },
   cardTextCont: {
     position: 'absolute',
@@ -615,7 +606,7 @@ const styles = StyleSheet.create({
   // PersonCard styles (shared for astrologer and pandit)
   personCardContainer: {
     alignItems: 'center',
-   marginHorizontal:moderateScale(5),
+    marginHorizontal:moderateScale(5),
     backgroundColor: '#fff',
     borderRadius: moderateScale(12),
     padding: moderateScale(10),
@@ -657,6 +648,8 @@ const styles = StyleSheet.create({
     height: moderateScale(50),
     borderRadius: moderateScale(25),
     marginBottom: moderateScale(8),
+    backgroundColor: '#fff',
+    objectFit:'fill'
   },
   personName: {
     fontSize: moderateScale(14),
@@ -704,4 +697,7 @@ const styles = StyleSheet.create({
     fontWeight: Platform.OS === 'ios' ? '600' : 'bold',
     fontSize: moderateScale(13),
   },
+  placeholderText:{
+    color:'gray'
+  }
 });

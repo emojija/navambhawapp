@@ -1,9 +1,25 @@
 import React from 'react';
-import {  View,  Text,  Image,  StatusBar,  StyleSheet,  Dimensions,  Platform,  TouchableOpacity } from 'react-native';
+import { View, Text, Image, StatusBar, StyleSheet, Dimensions, Platform, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {  HomeIcon,  ChatBubbleLeftIcon,  GlobeAltIcon,  BookOpenIcon,  InboxArrowDownIcon,  PlusCircleIcon,  UserIcon,  WalletIcon } from 'react-native-heroicons/outline';
-import {  HomeIcon as HomeIconSolid,  ChatBubbleLeftIcon as ChatBubbleLeftIconSolid,  GlobeAltIcon as GlobeAltIconSolid,  BookOpenIcon as BookOpenIconSolid,  InboxArrowDownIcon as InboxArrowDownIconSolid,  ArrowLeftOnRectangleIcon } from 'react-native-heroicons/solid';
+import {
+  HomeIcon,
+  ChatBubbleLeftIcon,
+  GlobeAltIcon,
+  BookOpenIcon,
+  InboxArrowDownIcon,
+  PlusCircleIcon,
+  UserIcon,
+  WalletIcon
+} from 'react-native-heroicons/outline';
+import {
+  HomeIcon as HomeIconSolid,
+  ChatBubbleLeftIcon as ChatBubbleLeftIconSolid,
+  GlobeAltIcon as GlobeAltIconSolid,
+  BookOpenIcon as BookOpenIconSolid,
+  InboxArrowDownIcon as InboxArrowDownIconSolid,
+  ArrowLeftOnRectangleIcon
+} from 'react-native-heroicons/solid';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { DrawerActions } from '@react-navigation/native';
 
@@ -18,8 +34,6 @@ import Wallet from '../Components/UserMiniCompo/Wallet';
 import ChatCallHistory from '../Components/UserMiniCompo/ChatCallHistory';
 import EditProfile from '../Components/UserMiniCompo/EditProfile';
 import ChangePassword from '../Components/UserMiniCompo/ChangePassword';
-
-
 
 // Dimensions
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -37,72 +51,79 @@ const scaleFont = size => {
 };
 
 // Top bar
-const TopBar = ({ navigation }) => (
-  <SafeAreaView
-    edges={['top', 'left', 'right']}
-    style={{ backgroundColor: '#FFE7FA' }}
-  >
-    <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-    <View style={styles.topBar}>
-      <View style={styles.topLeft}>
-        <View
-          style={[
-            styles.imgCont,
-            {
-              width: IMAGE_SIZE,
-              height: IMAGE_SIZE,
-              borderRadius: IMAGE_SIZE / 2,
-            },
-          ]}
-        >
-          <Image
-            style={{
-              width: IMAGE_SIZE,
-              height: IMAGE_SIZE,
-              borderRadius: IMAGE_SIZE / 2,
-            }}
-            source={{ uri: USER_IMAGE }}
-            resizeMode="cover"
-          />
-        </View>
-        <View>
-          <Text style={styles.nameText}>Ashish</Text>
-          <Text style={styles.welcomeText}>Welcome</Text>
-        </View>
-      </View>
+const TopBar = ({ loginUser , navigation }) => {
+  console.log("loginUser " , loginUser)
+  
 
-      <View style={styles.topRight}>
-        <View style={styles.moneyBox}>
-          <Text style={styles.money}>Rs {Money}</Text>
-          {Money < 100 ? (
-            <PlusCircleIcon color="purple" size={WALLET_ICON_SIZE} />
-          ) : (
-            <WalletIcon color="purple" size={WALLET_ICON_SIZE} />
-          )}
+  return (
+    <SafeAreaView
+      edges={['top', 'left', 'right']}
+      style={{ backgroundColor: '#FFE7FA' }}
+    >
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <View style={styles.topBar}>
+        <View style={styles.topLeft}>
+          <View
+            style={[
+              styles.imgCont,
+              {
+                width: IMAGE_SIZE,
+                height: IMAGE_SIZE,
+                borderRadius: IMAGE_SIZE / 2,
+              },
+            ]}
+          >
+            <Image
+              style={{
+                width: IMAGE_SIZE,
+                height: IMAGE_SIZE,
+                borderRadius: IMAGE_SIZE / 2,
+                objectFit:'fill'
+              }}
+              source={{ uri: USER_IMAGE }}
+              resizeMode="cover"
+            />
+          </View>
+          <View>
+            <Text style={styles.nameText}>{loginUser.name ? loginUser.name : ashish}</Text>
+            <Text style={styles.welcomeText}>Welcome</Text>
+          </View>
         </View>
 
-        <TouchableOpacity style={styles.profileBox} onPress={() => {}}>
-          <ArrowLeftOnRectangleIcon color="purple" size={ICON_SIZE} />
-        </TouchableOpacity>
-        {/* User button opens drawer */}
-        <TouchableOpacity
-          style={styles.profileBox}
-          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-        >
-          <UserIcon color="purple" size={ICON_SIZE} />
-        </TouchableOpacity>
+        <View style={styles.topRight}>
+          <View style={styles.moneyBox}>
+            <Text style={styles.money}>Rs {Money}</Text>
+            {Money < 100 ? (
+              <PlusCircleIcon color="purple" size={WALLET_ICON_SIZE} />
+            ) : (
+              <WalletIcon color="purple" size={WALLET_ICON_SIZE} />
+            )}
+          </View>
+
+          <TouchableOpacity style={styles.profileBox} onPress={() => navigation.replace('SignIn')}>
+            <ArrowLeftOnRectangleIcon color="purple" size={ICON_SIZE} />
+          </TouchableOpacity>
+          {/* User button opens drawer */}
+          <TouchableOpacity
+            style={styles.profileBox}
+            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+          >
+            <UserIcon color="purple" size={ICON_SIZE} />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
-  </SafeAreaView>
-);
+    </SafeAreaView>
+  );
+};
 
 // Bottom Tabs
 const Tab = createBottomTabNavigator();
-function BottomTabs() {
+function BottomTabs({route}) {
+  const { loginUser } = route.params ;
   return (
     <Tab.Navigator
       screenOptions={({ route, navigation }) => ({
-        header: () => <TopBar navigation={navigation} />,
+        header: (props) => <TopBar navigation={navigation}  loginUser={loginUser} />,
         tabBarActiveTintColor: '#580A46',
         tabBarInactiveTintColor: '#454545',
         animationEnabled: true,
@@ -138,6 +159,8 @@ function BottomTabs() {
               ) : (
                 <InboxArrowDownIcon color={color} size={size} />
               );
+            default:
+              return null;
           }
         },
       })}
@@ -153,7 +176,7 @@ function BottomTabs() {
 
 // Drawer
 const Drawer = createDrawerNavigator();
-export default function App() {
+export default function App({route}) {
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -164,6 +187,7 @@ export default function App() {
       <Drawer.Screen
         name="HomeTabs"
         component={BottomTabs}
+        initialParams={{ loginUser: route?.params?.loginUser }} 
         options={{ title: 'Home' }}
       />
       <Drawer.Screen name="Wallet" component={Wallet} />

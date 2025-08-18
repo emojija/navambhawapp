@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StatusBar, StyleSheet, Dimensions,  TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { CreditCardIcon, UsersIcon, BookmarkSquareIcon, EllipsisVerticalIcon, ArrowRightOnRectangleIcon } from 'react-native-heroicons/outline';
+import { CreditCardIcon, UsersIcon, BookmarkSquareIcon, EllipsisVerticalIcon, ArrowLeftOnRectangleIcon } from 'react-native-heroicons/outline';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 
@@ -39,10 +39,10 @@ const TopBar = ({ navigation }) => (
         <TouchableOpacity
           style={styles.iconButton}
           onPress={() => {
-            // TODO: Implement logout logic here
+            navigation.replace('AstroSignIn')
           }}
         >
-          <ArrowRightOnRectangleIcon color="#800080" size={scaleFont(28)} />
+          <ArrowLeftOnRectangleIcon color="#800080" size={scaleFont(28)} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.dotsButton}

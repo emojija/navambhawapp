@@ -25,11 +25,8 @@ const specilazation = [
   "kundli"
 ];
 
-
-
 // AstrologerCard component for rendering each astrologer card
 const AstrologerCard = ({ astrologer , navigation  }) => {
-  
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate('AstroProfile',{astroData:astrologer})}
@@ -58,6 +55,37 @@ const AstrologerCard = ({ astrologer , navigation  }) => {
         </View>
       </View>
     </TouchableOpacity>
+  );
+};
+
+// FakeAstrologerCard component for empty state
+const FakeAstrologerCard = () => {
+  return (
+    <View style={styles.cardContainer}>
+      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <View style={[styles.avatar, { backgroundColor: '#e5d0f7', justifyContent: 'center', alignItems: 'center' }]}>
+          <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: scale(22) }}></Text>
+        </View>
+        <View style={styles.expTextContainer}>
+          <Text style={styles.expText}></Text>
+        </View>
+      </View>
+      <View style={styles.cardInfo}>
+        <View style={styles.nameRow}>
+          <Text style={styles.name}></Text>
+        </View>
+        <Text style={styles.expertise} numberOfLines={1} ellipsizeMode="tail">
+        
+        </Text>
+        <Text style={styles.details}>
+          -
+        </Text>
+        <View style={styles.priceChatRow}>
+          <Text style={styles.price}></Text>
+          <Text style={[styles.rating]}></Text>
+        </View>
+      </View>
+    </View>
   );
 };
 
@@ -94,7 +122,6 @@ const ChatTab = () => {
         const res = await axios.get('https://backend.navambhaw.com/v1/fetchastrologers');
         if (res.status === 200 && Array.isArray(res.data?.data)) {
           setAstroCard(res.data.data);
-        
           console.log(res.data.data)
         } else {
           setAstroCard([]);
@@ -105,7 +132,6 @@ const ChatTab = () => {
         setAstroCard([]);
       } finally {
         // setIsLoading(false);
-       
       }
     };
     fetchAstrologers();
@@ -127,6 +153,17 @@ const ChatTab = () => {
   //     return false;
   //   });
   // }, [selectedSpec, astroCard]);
+
+  // Helper to render at least 6 fake cards if astroCard is empty
+  const renderFakeAstrologerCards = () => {
+    const fakeCards = [];
+    for (let i = 0; i < 6; i++) {
+      fakeCards.push(
+        <FakeAstrologerCard key={`fake-card-${i}`} />
+      );
+    }
+    return fakeCards;
+  };
 
   return (
     <View style={styles.chatCont}>
@@ -160,7 +197,7 @@ const ChatTab = () => {
           data={astroCard}
           horizontal={false}
           keyExtractor={item => item.id}
-          renderItem={({ item }) => <AstrologerCard  astrologer={item} navigation={navigation} />}
+          renderItem={({ item }) => <AstrologerCard astrologer={item} navigation={navigation} />}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingHorizontal: moderateScale(6),
@@ -169,10 +206,8 @@ const ChatTab = () => {
             alignItems: 'center',
           }}
           ListEmptyComponent={
-            <View style={{ alignItems: 'center', marginTop: 40 }}>
-              <Text style={{ color: '#82428f', fontSize: scale(16), fontWeight: '600' }}>
-                No astrologers found for this specialization.
-              </Text>
+            <View style={{ alignItems: 'center', marginTop: 40, width: '100%' }}>
+              {renderFakeAstrologerCards()}
             </View>
           }
         />

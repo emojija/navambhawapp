@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Platform, TextInp
 import { ArrowLeftIcon } from 'react-native-heroicons/outline';
 import { Formik } from 'formik';
 import { Picker } from '@react-native-picker/picker';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.92;
@@ -38,7 +39,7 @@ const Panchang = ({ navigation }) => {
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Status Bar configuration */}
       <StatusBar
         barStyle="dark-content"
@@ -59,7 +60,7 @@ const Panchang = ({ navigation }) => {
             }
           }}
         >
-          <ArrowLeftIcon size={28} color="#000000" />
+          <ArrowLeftIcon size={24} color="#000000" />
         </TouchableOpacity>
         <Text style={styles.heading}>{showForm ? 'Select Panchang Date' : "Today's Panchang"}</Text>
       </View>
@@ -260,7 +261,7 @@ const Panchang = ({ navigation }) => {
           </Formik>
         </KeyboardAvoidingView>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -272,17 +273,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f7fc',
     paddingHorizontal: 0,
     paddingTop: 0,
-    paddingBottom: 16,
+    // paddingBottom: 16,
     justifyContent: 'flex-start',
   },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 32,
+    // paddingTop: 32,
     paddingBottom: 10,
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
     backgroundColor: 'transparent',
-    justifyContent: 'space-between',
+    justifyContent: 'start',
   },
   backButton: {
     width: 36,
@@ -292,10 +293,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   heading: {
-    fontSize: 26,
+    fontSize: 22,
+    paddingLeft:2,
     fontWeight: 'bold',
     color: '#580A46',
-    textAlign: 'center',
+    textAlign: 'left',
     letterSpacing: 0.5,
     flex: 1,
   },
@@ -376,12 +378,12 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#580A46',
-    borderRadius: 12,
-    paddingVertical: 18,
+    borderRadius: 10,
+    paddingVertical: 10,
     alignItems: 'center',
     marginHorizontal: 24,
-    marginTop: 10,
-    marginBottom: 8,
+    // marginTop: 10,
+    // marginBottom: 8,
     shadowColor: '#580A46',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.18,

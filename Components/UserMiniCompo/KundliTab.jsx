@@ -10,14 +10,14 @@ import {
   useWindowDimensions,
   KeyboardAvoidingView,
   ScrollView,
-} from 'react-native';
+} from 'react-native'; 
 import { Formik } from 'formik';
 import { Picker } from '@react-native-picker/picker';
 
 // Responsive utility functions
 const guidelineBaseWidth = 375;
 const guidelineBaseHeight = 667;
-
+ 
 const scale = (size, width) => (width / guidelineBaseWidth) * size;
 const verticalScale = (size, height) => (height / guidelineBaseHeight) * size;
 const moderateScale = (size, width, factor = 0.5) =>
@@ -121,6 +121,7 @@ export default function KundliForm() {
                         onValueChange={val => setFieldValue('day', val)}
                         style={styles.picker}
                         itemStyle={styles.pickerItem}
+                        dropdownIconColor="black" 
                       >
                         <Picker.Item label="Day" value="" />
                         {days.map(d => (
@@ -135,6 +136,7 @@ export default function KundliForm() {
                         onValueChange={val => setFieldValue('month', val)}
                         style={styles.picker}
                         itemStyle={styles.pickerItem}
+                        dropdownIconColor="black" //
                       >
                         <Picker.Item label="Month" value="" />
                         {months.map(m => (
@@ -149,6 +151,7 @@ export default function KundliForm() {
                         onValueChange={val => setFieldValue('year', val)}
                         style={styles.picker}
                         itemStyle={styles.pickerItem}
+                        dropdownIconColor="black" //
                       >
                         <Picker.Item label="Year" value="" />
                         {years.map(y => (
@@ -166,6 +169,7 @@ export default function KundliForm() {
                         onValueChange={val => setFieldValue('hour', val)}
                         style={styles.picker}
                         itemStyle={styles.pickerItem}
+                        dropdownIconColor="black" //
                       >
                         <Picker.Item label="Hour" value="" />
                         {hours.map(h => (
@@ -180,6 +184,7 @@ export default function KundliForm() {
                         onValueChange={val => setFieldValue('min', val)}
                         style={styles.picker}
                         itemStyle={styles.pickerItem}
+                        dropdownIconColor="black" //
                       >
                         <Picker.Item label="Min" value="" />
                         {minutes.map(m => (
@@ -194,6 +199,7 @@ export default function KundliForm() {
                         onValueChange={val => setFieldValue('sec', val)}
                         style={styles.picker}
                         itemStyle={styles.pickerItem}
+                        dropdownIconColor="black" //
                       >
                         <Picker.Item label="Sec" value="" />
                         {seconds.map(s => (

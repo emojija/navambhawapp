@@ -9,7 +9,6 @@ import {
   BookOpenIcon,
   InboxArrowDownIcon,
   PlusCircleIcon,
-  UserIcon,
   WalletIcon
 } from 'react-native-heroicons/outline';
 import {
@@ -38,8 +37,8 @@ import ChangePassword from '../Components/UserMiniCompo/ChangePassword';
 // Dimensions
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BASE_DIM = Math.min(SCREEN_WIDTH, SCREEN_HEIGHT);
-const IMAGE_SIZE = Math.round(BASE_DIM * 0.14);
-const ICON_SIZE = Math.round(BASE_DIM * 0.07);
+const IMAGE_SIZE = Math.round(BASE_DIM * 0.1);
+const ICON_SIZE = Math.round(BASE_DIM * 0.06);
 const WALLET_ICON_SIZE = ICON_SIZE;
 const Money = 100;
 const USER_IMAGE = 'https://randomuser.me/api/portraits/men/32.jpg';
@@ -63,7 +62,38 @@ const TopBar = ({ loginUser , navigation }) => {
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <View style={styles.topBar}>
         <View style={styles.topLeft}>
-          <View
+         
+          <View>
+            <Text style={styles.nameText}>
+              {loginUser && loginUser.name
+                ? (loginUser.name.length < 10
+                    ? loginUser.name
+                    : loginUser.name.split(" ")[0])
+                : 'User'}
+            </Text>
+            <Text style={styles.welcomeText}>Welcome</Text>
+          </View>
+        </View>
+
+        <View style={styles.topRight}>
+          <View style={styles.moneyBox}>
+            <Text style={styles.money}>Rs {Money}</Text>
+            {Money < 100 ? (
+              <PlusCircleIcon color="purple" size={WALLET_ICON_SIZE} />
+            ) : (
+              <WalletIcon color="purple" size={WALLET_ICON_SIZE} />
+            )}
+          </View>
+
+          <TouchableOpacity style={styles.profileBox} onPress={() => navigation.replace('SignIn')}>
+            <ArrowLeftOnRectangleIcon color="purple" size={ICON_SIZE} />
+          </TouchableOpacity>
+          {/* User button opens drawer */}
+          <TouchableOpacity
+            // style={styles.profileBox}
+            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+          >
+            <View
             style={[
               styles.imgCont,
               {
@@ -84,31 +114,6 @@ const TopBar = ({ loginUser , navigation }) => {
               resizeMode="cover"
             />
           </View>
-          <View>
-            <Text style={styles.nameText}>{loginUser.name ? loginUser.name : ashish}</Text>
-            <Text style={styles.welcomeText}>Welcome</Text>
-          </View>
-        </View>
-
-        <View style={styles.topRight}>
-          <View style={styles.moneyBox}>
-            <Text style={styles.money}>Rs {Money}</Text>
-            {Money < 100 ? (
-              <PlusCircleIcon color="purple" size={WALLET_ICON_SIZE} />
-            ) : (
-              <WalletIcon color="purple" size={WALLET_ICON_SIZE} />
-            )}
-          </View>
-
-          <TouchableOpacity style={styles.profileBox} onPress={() => navigation.replace('SignIn')}>
-            <ArrowLeftOnRectangleIcon color="purple" size={ICON_SIZE} />
-          </TouchableOpacity>
-          {/* User button opens drawer */}
-          <TouchableOpacity
-            style={styles.profileBox}
-            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-          >
-            <UserIcon color="purple" size={ICON_SIZE} />
           </TouchableOpacity>
         </View>
       </View>
@@ -205,7 +210,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: SCREEN_WIDTH * 0.02,
-    paddingVertical: SCREEN_HEIGHT * 0.01,
+    paddingBottom: SCREEN_HEIGHT * 0.01,
   },
   topLeft: {
     flexDirection: 'row',
@@ -218,16 +223,16 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: scaleFont(20),
     fontWeight: '600',
+    color:'purple'
   },
   welcomeText: {
-    fontSize: scaleFont(15),
+    fontSize: scaleFont(11),
     color: '#757575',
     fontWeight: '500',
   },
   topRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    ...(Platform.OS === 'web' ? { gap: 10 } : {}),
     marginLeft: SCREEN_WIDTH * 0.025,
   },
   moneyBox: {

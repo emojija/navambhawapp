@@ -1,7 +1,8 @@
-import { Image, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View, Dimensions, ScrollView, Platform, PixelRatio } from 'react-native'
+import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View, Dimensions, ScrollView, Platform, PixelRatio } from 'react-native'
 import React from 'react'
 import { ArrowLeftIcon, PhoneIcon } from 'react-native-heroicons/outline'
 import { ChatBubbleBottomCenterIcon } from 'react-native-heroicons/solid'
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Responsive scaling helpers
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -20,104 +21,101 @@ const WHITE = '#FFF';
 const GRAY = '#666';
 const GOLD = '#FFD700';
 
-const AstrologerProfile = ({ navigation , route }) => {
+const AstrologerProfile = ({ navigation, route }) => {
   const { astroData } = route.params;
-  // console.log(astroData, 'data after load') // Remove noisy log
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <StatusBar
-          barStyle="light-content"
-          backgroundColor={PURPLE}
-          translucent={false}
-          hidden={false}
-        />
-        {/* Top Bar */}
-        <View style={styles.topBar}>
-          <TouchableOpacity
-            style={styles.backBtn}
-            onPress={() => navigation && navigation.goBack && navigation.goBack()}
-            activeOpacity={0.7}
-          >
-            <ArrowLeftIcon color={WHITE} size={moderateScale(26)} />
-            <Text style={styles.profileTitle}>Profile</Text>
-          </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor={PURPLE}
+        translucent={false}
+        hidden={false}
+      />
+      {/* Top Bar */}
+      <View style={styles.topBar}>
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={() => navigation && navigation.goBack && navigation.goBack()}
+          activeOpacity={0.7}
+        >
+          <ArrowLeftIcon color={WHITE} size={moderateScale(26)} />
+          <Text style={styles.profileTitle}>Profile</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Profile Image, Name, Rating, Expertise */}
+        <View style={styles.profileSection}>
+          <View style={styles.profileImageShadow}>
+            <Image
+              source={{ uri: `${astroData.profileImage}` }}
+              style={styles.profileImage}
+              resizeMode="cover"
+            />
+            <View style={styles.ratingBadge}>
+              <Text style={styles.ratingBadgeText}>⭐ {Number(astroData.average_rating).toFixed(1)}</Text>
+            </View>
+          </View>
+          <Text style={styles.nameText}>{astroData.username}</Text>
+
+          <View style={styles.expertiseRow}>
+            {astroData.specialization && typeof astroData.specialization === 'string'
+              ? astroData.specialization.split(',').map((exp, idx) => (
+                <View key={idx} style={styles.expertiseBadge}>
+                  <Text style={styles.expertiseBadgeText}>{exp.trim()}</Text>
+                </View>
+              ))
+              : null}
+          </View>
         </View>
 
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Profile Image, Name, Rating, Expertise */}
-          <View style={styles.profileSection}>
-            <View style={styles.profileImageShadow}>
-              <Image
-                source={{ uri: `${astroData.profileImage}` }}
-                style={styles.profileImage}
-                resizeMode="cover"
-              />
-              <View style={styles.ratingBadge}>
-                <Text style={styles.ratingBadgeText}>⭐ {Number(astroData.average_rating).toFixed(1)}</Text>
-              </View>
-            </View>
-            <Text style={styles.nameText}>{astroData.username}</Text>
-           
-            <View style={styles.expertiseRow}>
-              {astroData.specialization && typeof astroData.specialization === 'string'
-                ? astroData.specialization.split(',').map((exp, idx) => (
-                    <View key={idx} style={styles.expertiseBadge}>
-                      <Text style={styles.expertiseBadgeText}>{exp.trim()}</Text>
-                    </View>
-                  ))
-                : null}
-            </View>
-          </View>
-
-          {/* Language, Experience, Amount */}
-          <View style={styles.infoRow}>
-            <View style={styles.infoBox}>
-              <Text style={styles.infoLabel}>Languages</Text>
-              <Text style={styles.infoValue}>
-                {Array.isArray(astroData.languages)
-                  ? astroData.languages.join(', ')
-                  : typeof astroData.languages === 'string'
+        {/* Language, Experience, Amount */}
+        <View style={styles.infoRow}>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoLabel}>Languages</Text>
+            <Text style={styles.infoValue}>
+              {Array.isArray(astroData.languages)
+                ? astroData.languages.join(', ')
+                : typeof astroData.languages === 'string'
                   ? astroData.languages
                   : ''}
-              </Text>
-            </View>
-            <View style={styles.infoBox}>
-              <Text style={styles.infoLabel}>Experience</Text>
-              <Text style={styles.infoValue}>{astroData.experience} yrs</Text>
-            </View>
-            <View style={styles.infoBox}>
-              <Text style={styles.infoLabel}>Price</Text>
-              <Text style={styles.infoValue}>₹{astroData.price}/min</Text>
-            </View>
+            </Text>
           </View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoLabel}>Experience</Text>
+            <Text style={styles.infoValue}>{astroData.experience} yrs</Text>
+          </View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoLabel}>Price</Text>
+            <Text style={styles.infoValue}>₹{astroData.price}/min</Text>
+          </View>
+        </View>
 
-          {/* About */}
-          <View style={styles.aboutSection}>
-            <Text style={styles.aboutTitle}>About</Text>
-            <Text style={styles.aboutText}>{astroData.description}</Text>
-          </View>
-        </ScrollView>
+        {/* About */}
+        <View style={styles.aboutSection}>
+          <Text style={styles.aboutTitle}>About</Text>
+          <Text style={styles.aboutText}>{astroData.description}</Text>
+        </View>
+      </ScrollView>
 
-        {/* Chat and Call Buttons at Bottom */}
-        <SafeAreaView style={styles.bottomSafeArea}>
-          <View style={styles.bottomBar}>
-            <TouchableOpacity style={styles.actionBtn} activeOpacity={0.85}>
-              <ChatBubbleBottomCenterIcon color={WHITE} size={moderateScale(22)} />
-              <Text style={styles.actionBtnText}>Chat</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.actionBtn, styles.callActionBtn]} activeOpacity={0.85}>
-              <PhoneIcon color={WHITE} size={moderateScale(22)} />
-              <Text style={styles.actionBtnText}>Call</Text>
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
-      </SafeAreaView>
-    </View>
+      {/* Fixed Bottom Bar */}
+      <View style={styles.fixedBottomBarWrapper}>
+        <View style={styles.bottomBarFixed}>
+          <TouchableOpacity style={styles.actionBtnFixed} activeOpacity={0.85}>
+            <ChatBubbleBottomCenterIcon color={WHITE} size={moderateScale(22)} />
+            <Text style={styles.actionBtnTextFixed}>Chat</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.actionBtnFixed, styles.callActionBtnFixed]} activeOpacity={0.85}>
+            <PhoneIcon color={WHITE} size={moderateScale(22)} />
+            <Text style={styles.actionBtnTextFixed}>Call</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
   )
 }
 
@@ -128,11 +126,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: PURPLE,
   },
-  safeArea: {
-    flex: 1,
-    backgroundColor: PURPLE,
-    paddingTop: Platform.OS === 'android' ? verticalScale(15) : 0,
-  },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -142,7 +135,7 @@ const styles = StyleSheet.create({
   backBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: verticalScale(6),
+    paddingBottom: moderateScale(4),
     paddingHorizontal: scale(2),
     borderRadius: moderateScale(20),
   },
@@ -154,11 +147,12 @@ const styles = StyleSheet.create({
     marginLeft: scale(8),
   },
   scrollContent: {
-    paddingBottom: verticalScale(100),
+    paddingBottom: verticalScale(120), // leave space for fixed bottom bar
     backgroundColor: LIGHT_PURPLE,
     minHeight: SCREEN_HEIGHT * 0.88,
   },
   profileSection: {
+    flex: 1,
     alignItems: 'center',
     marginTop: verticalScale(22),
     marginBottom: verticalScale(14),
@@ -183,7 +177,7 @@ const styles = StyleSheet.create({
     height: scale(100),
     borderRadius: moderateScale(50),
     borderWidth: 3,
-    objectFit:'fill',
+    objectFit: 'fill',
     borderColor: PURPLE,
     backgroundColor: WHITE,
   },
@@ -315,16 +309,22 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     textAlign: 'justify',
   },
-  bottomSafeArea: {
+  // --- Fixed Bottom Bar Styles ---
+  fixedBottomBarWrapper: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'transparent',
+    zIndex: 100,
   },
-  bottomBar: {
+  bottomBarFixed: {
     backgroundColor: LIGHT_PURPLE,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: verticalScale(8),
-    paddingBottom: Platform.OS === 'ios' ? verticalScale(18) : verticalScale(10),
+    paddingBottom: Platform.OS === 'ios' ? verticalScale(18) : verticalScale(15),
     paddingHorizontal: scale(10),
     elevation: 8,
     shadowColor: PURPLE,
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     gap: scale(8),
   },
-  actionBtn: {
+  actionBtnFixed: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
@@ -347,12 +347,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: scale(6),
   },
-  callActionBtn: {
+  callActionBtnFixed: {
     backgroundColor: RED,
     marginLeft: scale(4),
     marginRight: 0,
   },
-  actionBtnText: {
+  actionBtnTextFixed: {
     color: WHITE,
     fontSize: fontScale(15),
     fontWeight: 'bold',

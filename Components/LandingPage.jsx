@@ -1,52 +1,52 @@
-import { StyleSheet, View, Text } from 'react-native'
-import React, { useEffect } from 'react'
-import MaskedView from '@react-native-masked-view/masked-view'
-import LinearGradient from 'react-native-linear-gradient'
+import { StyleSheet, View, Image, Dimensions } from 'react-native';
+import React, { useEffect } from 'react';
+import logo from '../assets/Images/NavambhawLogo.png';
+import Toast from 'react-native-toast-message';
+import NetInfo from '@react-native-community/netinfo';
 
-const LandingPage = ({navigation}) => {
-    useEffect(() => {
-      const timer = setTimeout(() => {
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+const LOGO_WIDTH = SCREEN_WIDTH * 0.5;
+const LOGO_HEIGHT = SCREEN_HEIGHT * 0.18;
+
+const LandingPage = ({ navigation }) => {
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      if (state.isConnected && state.isInternetReachable) {
+        console.log('yes connected')
+        // Internet really works → move ahead
         navigation.replace('SignIn');
-      }, 700);
-      return () => clearTimeout(timer);
-    }, []);
-    
+      } else {
+        // No internet access
+        Toast.show({
+          type: 'error',
+          text1: 'Internet',
+          text2: 'Please connect to internet.',
+        });
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigation]);
+
   return (
     <View style={styles.firstPage}>
-      <MaskedView
-        maskElement={
-          <Text style={styles.logo}>
-            Navambhaw.com
-          </Text>
-        }
-      >
-        <LinearGradient
-          colors={['#800080', '#FFFFFF']} // purple to white
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={{ height: 40, justifyContent: 'center' }}
-        >
-     
-          <Text style={[styles.logo, { opacity: 0 }]}>Navambhaw.com</Text>
-        </LinearGradient>
-      </MaskedView>
+      <Image source={logo} style={styles.logo} resizeMode="contain" />
     </View>
-  )
-}
+  );
+};
 
-export default LandingPage
+export default LandingPage;
 
 const styles = StyleSheet.create({
-    firstPage:{
-        backgroundColor:'#580A46',
-        flex:1,
-        justifyContent:'center',
-        alignItems:'center'
-    },
-    logo:{
-        fontSize: 32,
-        color: '#fff',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    }
-})
+  firstPage: {
+    backgroundColor: '#580A46',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logo: {
+    width: LOGO_WIDTH,
+    height: LOGO_HEIGHT,
+  },
+});

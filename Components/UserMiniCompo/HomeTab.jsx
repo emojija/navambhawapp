@@ -1,9 +1,9 @@
-import {  StyleSheet,  Text, View, Dimensions, Image, FlatList, Platform, ScrollView, TouchableOpacity, TouchableWithoutFeedback, SafeAreaView } from 'react-native';
+import { StyleSheet,  Text, View, Dimensions, Image, FlatList, Platform, ScrollView, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { MagnifyingGlassIcon, LockClosedIcon } from 'react-native-heroicons/outline';
 import { LinearGradient } from 'react-native-linear-gradient';
-// import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import Carousel from 'react-native-reanimated-carousel';
 
 // Responsive utility for font size and spacing
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -12,11 +12,10 @@ const guidelineBaseHeight = 667;
 
 const scale = size => (SCREEN_WIDTH / guidelineBaseWidth) * size;
 const verticalScale = size => (SCREEN_HEIGHT / guidelineBaseHeight) * size;
-const moderateScale = (size, factor = 0.5) =>
-  size + (scale(size) - size) * factor;
+const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor;
 
 // Card for Astrologer and Pandit (shared style and logic)
-const AstroCard = ({ item ,navigation }) => {
+const AstroCard = ({ item, navigation }) => {
   // Show only first 12 characters of name, add "..." if longer
   let displayName = item.username;
   if (typeof displayName === 'string' && displayName.length > 12) {
@@ -35,10 +34,16 @@ const AstroCard = ({ item ,navigation }) => {
         ellipsizeMode="tail"
         adjustsFontSizeToFit={false}
       >
-        {displayName} 
+        {displayName}
       </Text>
       <Text style={styles.personAmount}>₹{item.price}/min</Text>
-      <TouchableOpacity activeOpacity={0.95} onPress={()=>{navigation.navigate('AstroProfile',{astroData : item})}} style={styles.startChatWrapper}>
+      <TouchableOpacity
+        activeOpacity={0.95}
+        onPress={() => {
+          navigation.navigate('AstroProfile', { astroData: item });
+        }}
+        style={styles.startChatWrapper}
+      >
         <View style={styles.startChatButton}>
           <Text style={styles.startChatText}>View Profile</Text>
         </View>
@@ -46,7 +51,7 @@ const AstroCard = ({ item ,navigation }) => {
     </View>
   );
 };
-const PoojaCard = ({ item , navigation }) => {
+const PoojaCard = ({ item, navigation }) => {
   // Show only first 12 characters of name, add "..." if longer
   let displayName = item.Pooja_name;
   if (typeof displayName === 'string' && displayName.length > 12) {
@@ -55,7 +60,9 @@ const PoojaCard = ({ item , navigation }) => {
   return (
     <View style={styles.poojaCardContainer}>
       <Image
-        source={{ uri: `https://backend.navambhaw.com/pooja_image/${item.Pooja_image}` }}
+        source={{
+          uri: `https://backend.navambhaw.com/pooja_image/${item.Pooja_image}`,
+        }}
         style={styles.personImage}
         resizeMode="cover"
       />
@@ -69,7 +76,12 @@ const PoojaCard = ({ item , navigation }) => {
       </Text>
       <Text style={styles.personAmount}>{item.Type}</Text>
       <View style={styles.startChatWrapper}>
-        <TouchableOpacity activeOpacity={0.8} onPress={()=>{navigation.navigate('PoojaInfo',{poojaData:item.id})}}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            navigation.navigate('PoojaInfo', { poojaData: item.id });
+          }}
+        >
           <View style={styles.poojaStartChatButton}>
             <Text style={styles.poojaStartChatText}>View Details</Text>
           </View>
@@ -78,23 +90,31 @@ const PoojaCard = ({ item , navigation }) => {
     </View>
   );
 };
-
-const HomeTab = ({navigation}) => {
-  const[poojaCard,setPoojaCard] = useState([])
-  const [astroCard,setAstroCard] = useState([])
+const images = [
+  'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=900&q=80', // Galaxy
+  'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&w=900&q=80', // Starry sky
+  'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=900&q=80', // Moon
+]
+const HomeTab = ({ navigation }) => {
+  const [poojaCard, setPoojaCard] = useState([]);
+  const [astroCard, setAstroCard] = useState([]);
   
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   // Accept navigation from props or useNavigation as fallback
-   
-  // for calling pooja api 
+
+  // for calling pooja api
   useEffect(() => {
     const fetchPoojas = async () => {
       // setIsLoading(true);
       try {
-        const res = await axios.get('https://backend.navambhaw.com/v1/allpoojas');
+        const res = await axios.get(
+          'https://backend.navambhaw.com/v1/allpoojas',
+        );
         if (res.status === 200 && Array.isArray(res.data?.data)) {
           setPoojaCard(res.data.data);
-        
-          console.log(res.data.data)
+
+          console.log(res.data.data);
         } else {
           setPoojaCard([]);
           console.warn('Unexpected response structure:', res.data);
@@ -104,7 +124,6 @@ const HomeTab = ({navigation}) => {
         setPoojaCard([]);
       } finally {
         // setIsLoading(false);
-       
       }
     };
     fetchPoojas();
@@ -114,11 +133,13 @@ const HomeTab = ({navigation}) => {
     const fetchAstrologers = async () => {
       // setIsLoading(true);
       try {
-        const res = await axios.get('https://backend.navambhaw.com/v1/fetchastrologers');
+        const res = await axios.get(
+          'https://backend.navambhaw.com/v1/fetchastrologers',
+        );
         if (res.status === 200 && Array.isArray(res.data?.data)) {
           setAstroCard(res.data.data);
-        
-          console.log(res.data.data)
+
+          console.log(res.data.data);
         } else {
           setAstroCard([]);
           console.warn('Unexpected response structure:', res.data);
@@ -128,232 +149,304 @@ const HomeTab = ({navigation}) => {
         setAstroCard([]);
       } finally {
         // setIsLoading(false);
-       
       }
     };
     fetchAstrologers();
   }, []);
 
+  // --- Carousel height/width fix ---
+  // We'll use a fixed aspect ratio and padding for the carousel container and images.
+  // Let's use 16:9 aspect ratio for the banner, and make it responsive to screen width.
+
+  const CAROUSEL_WIDTH = SCREEN_WIDTH - moderateScale(16); // 8px padding on each side
+  const CAROUSEL_HEIGHT = Math.round(CAROUSEL_WIDTH * 9 / 16) ; // 16:9 aspect ratio
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        bounces={true}
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
+      bounces={true}
+    >
+      {/* search bar  */}
+      <TouchableOpacity
+        style={styles.searchBar}
+        activeOpacity={0.8}
+        onPress={() => navigation.navigate('SearchAstro')}
       >
-        {/* search bar  */}
-        <TouchableOpacity
-          style={styles.searchBar}
-          activeOpacity={0.8}
-          onPress={() => navigation.navigate('SearchAstro')}
-        >
-          <View style={styles.searchBarInner}>
-            <Text style={styles.placeholderText}>Search Astrologers, Pandits</Text>
-            <MagnifyingGlassIcon
-              size={moderateScale(25)}
-              color="#757575"
-              style={styles.searchIcon}
-            />
-          </View>
-        </TouchableOpacity>
+        <View style={styles.searchBarInner}>
+          <Text style={styles.placeholderText}>
+            Search Astrologers, Pandits
+          </Text>
+          <MagnifyingGlassIcon
+            size={moderateScale(25)}
+            color="#757575"
+            style={styles.searchIcon}
+          />
+        </View>
+      </TouchableOpacity>
 
-        {/* improved image banner with secure chat text */}
-        <View style={styles.bannerOuter}>
-          <View style={styles.bannerWrapper}>
+      {/* improved image banner with secure chat text */}
+      <View style={styles.bannerOuter}>
+        <View style={{ width: CAROUSEL_WIDTH, alignSelf: 'center', justifyContent: 'center' }}>
+          <Carousel
+            loop
+            width={CAROUSEL_WIDTH}
+            height={CAROUSEL_HEIGHT}
+            autoPlay={true}
+            autoPlayInterval={2000}      // how long to wait before next auto slide
+            scrollAnimationDuration={800} // 800ms animation speed
+            data={images}
+            mode="parallax"
+            modeConfig={{
+              parallaxScrollingScale: 0.9,   // smaller = more gap
+              parallaxScrollingOffset: 50,   // bigger = more distance
+            }}
+            // scrollAnimationDuration={1500}
+            onSnapToItem={index => setCurrentIndex(index)}
+            renderItem={({ item }) => (
+              <Image
+                source={{ uri: item }}
+                style={{
+                  width: CAROUSEL_WIDTH,
+                  height: CAROUSEL_HEIGHT,
+                  borderRadius: 12,
+                  resizeMode: 'cover',
+                }}
+              />
+            )}
+          />
+
+          {/* Pagination Dots */}
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              
+            }}
+          >
+            {images.map((_, index) => (
+              <View
+                key={index}
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: 4,
+                  margin: 4,
+                  backgroundColor: index === currentIndex ? 'black' : 'gray',
+                }}
+              />
+            ))}
+          </View>
+        </View>
+      </View>
+
+      {/* navabhaw text  */}
+      <View style={styles.textCon}>
+        <View style={styles.largeText}>
+          <Text style={styles.horoscopeText}>Get daily horoscope with</Text>
+        </View>
+        <Text style={styles.navambhaw}>Navambhaw</Text>
+      </View>
+
+      {/*Free services  */}
+      <View style={styles.serviceCard}>
+        <Text style={styles.serviceText}>Free Services</Text>
+        <View style={styles.innService}>
+          <TouchableOpacity
+            activeOpacity={0.95}
+            onPress={() => navigation.navigate('Kundli')}
+            style={styles.card}
+          >
             <Image
-              style={styles.banner}
+              style={styles.cardImg}
               source={{
-                uri: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=900&q=80', // Secure chat themed, more focused
+                uri: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80', // Photo of Earth from space
               }}
-              resizeMode="cover"
-            />
-          </View>
-        </View>
-
-        {/* navabhaw text  */}
-        <View style={styles.textCon}>
-          <View style={styles.largeText}>
-            <Text style={styles.horoscopeText}>Get daily horoscope with</Text>
-          </View>
-          <Text style={styles.navambhaw}>Navambhaw</Text>
-        </View>
-
-        {/*Free services  */}
-        <View style={styles.serviceCard}>
-          <Text style={styles.serviceText}>Free Services</Text>
-          <View style={styles.innService}>
-            <TouchableOpacity activeOpacity={0.95} onPress={()=>navigation.navigate('Kundli')} style={styles.card}>
-              <Image
-                style={styles.cardImg}
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80', // Photo of Earth from space
-                }}
-                resizeMode="cover"
-              />
-              <LinearGradient
-                colors={['transparent', '#4B006E']}
-                style={StyleSheet.absoluteFill}
-                start={{ x: 0.5, y: 0 }}
-                end={{ x: 0.5, y: 1.5 }}
-              />
-              <View style={styles.cardTextCont}>
-                <Text style={styles.cardText}>Kundli/Birth</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.95} onPress={()=>navigation.navigate('Panchang')/*here add navigtion to panchang page */} style={styles.card}>
-              <Image
-                style={styles.cardImg}
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=800&q=80', // Buddhist monk in orange robe
-                }}
-                resizeMode="cover"
-              />
-              <LinearGradient
-                colors={['transparent', '#4B006E']}
-                style={StyleSheet.absoluteFill}
-                start={{ x: 0.5, y: 0 }}
-                end={{ x: 0.5, y: 1.5 }}
-              />
-              <View style={styles.cardTextCont}>
-                <Text style={styles.cardText}>Panchang</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* astrologer card container  */}
-        <View style={styles.astroCont}>
-          <View style={styles.astroTopBar}>
-            <Text style={styles.astrologer}>Astrologer</Text>
-            <TouchableWithoutFeedback onPress={() => navigation.navigate('Talk')}>
-              <View>
-                <Text style={styles.seeMoreText}>See more</Text>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-          <View>
-            <FlatList
-              data={astroCard}
-              keyExtractor={item => item.id}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.flatListContent}
-              renderItem={({ item }) => <AstroCard item={item} navigation={navigation} />}
-              style={styles.flatListStyle}
-            />
-          </View>
-        </View>
-
-        {/* Paid services  */}
-        <View style={styles.serviceCard}>
-          <Text style={styles.serviceText}>Paid Services</Text>
-          <View style={styles.innService}>
-            <View style={styles.card}>
-              <Image
-                style={styles.cardImg}
-                source={{
-                  uri: 'https://randomuser.me/api/portraits/men/32.jpg', // Example astrologer image
-                }}
-                resizeMode="cover"
-              />
-              <LinearGradient
-                colors={['transparent', '#4B006E']}
-                style={StyleSheet.absoluteFill}
-                start={{ x: 0.5, y: 0 }}
-                end={{ x: 0.5, y: 1.5 }}
-              />
-              <View style={styles.cardTextCont}>
-                <Text style={styles.cardText}>Pandits</Text>
-              </View>
-            </View>
-            <TouchableOpacity  activeOpacity={0.95} onPress={()=>navigation.navigate('Pooja')} style={styles.card}>
-              <Image
-                style={styles.cardImg}
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80', // Diwali/candle themed image (no h/w params)
-                }}
-                resizeMode="cover"
-              />
-              <LinearGradient
-                colors={['transparent', '#4B006E']}
-                style={StyleSheet.absoluteFill}
-                start={{ x: 0.5, y: 0 }}
-                end={{ x: 0.5, y: 1.5 }}
-              />
-              <View style={styles.cardTextCont}>
-                <Text style={styles.cardText}>Pooja</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* pandit card container (same style as astrologer card) */}
-        <View style={styles.panditCont}>
-          <View style={styles.astroTopBar}>
-            <Text style={styles.astrologer}>Pooja</Text>
-            <TouchableWithoutFeedback onPress={() => navigation.navigate('Pooja')}>
-              <View>
-                <Text style={styles.seeMoreText}>See more</Text>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-          <View>
-            <FlatList
-              data={poojaCard.slice(0, 10)}
-              keyExtractor={item => item.id}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.flatListContent}
-              renderItem={({ item }) => <PoojaCard item={item} navigation={navigation} />}
-              style={styles.flatListStyle}
-            />
-          </View>
-        </View>
-
-        {/* improved small banner with secure chat text */}
-        <View style={styles.bannerOuter}>
-          <View style={styles.banner1Wrapper}>
-            <Image
-              source={{
-                uri: 'https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=900&q=80', // A more modern, secure, chat-like image
-              }}
-              style={styles.banner1}
               resizeMode="cover"
             />
             <LinearGradient
-              colors={['rgba(0,0,0,0.0)', 'rgba(88,10,70,0.7)']}
-              style={styles.banner1Gradient}
-              start={{ x: 0.5, y: 0.2 }}
-              end={{ x: 0.5, y: 1 }}
+              colors={['transparent', '#4B006E']}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1.5 }}
             />
-            <View style={styles.bannerTextContainer}>
-              <LockClosedIcon size={moderateScale(28)} color="#fff" style={{marginBottom: moderateScale(4)}} />
-              <Text style={styles.bannerMainText}>Your Chats are Secure</Text>
-              <Text style={styles.bannerSubText}>End-to-end encrypted & private</Text>
+            <View style={styles.cardTextCont}>
+              <Text style={styles.cardText}>Kundli/Birth</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.95}
+            onPress={
+              () =>
+                navigation.navigate(
+                  'Panchang',
+                ) /*here add navigtion to panchang page */
+            }
+            style={styles.card}
+          >
+            <Image
+              style={styles.cardImg}
+              source={{
+                uri: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=800&q=80', // Buddhist monk in orange robe
+              }}
+              resizeMode="cover"
+            />
+            <LinearGradient
+              colors={['transparent', '#4B006E']}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1.5 }}
+            />
+            <View style={styles.cardTextCont}>
+              <Text style={styles.cardText}>Panchang</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* astrologer card container  */}
+      <View style={styles.astroCont}>
+        <View style={styles.astroTopBar}>
+          <Text style={styles.astrologer}>Astrologer</Text>
+          <TouchableWithoutFeedback onPress={() => navigation.navigate('Talk')}>
+            <View>
+              <Text style={styles.seeMoreText}>See more</Text>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+        <View>
+          <FlatList
+            data={astroCard}
+            keyExtractor={item => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.flatListContent}
+            renderItem={({ item }) => (
+              <AstroCard item={item} navigation={navigation} />
+            )}
+            style={styles.flatListStyle}
+          />
+        </View>
+      </View>
+
+      {/* Paid services  */}
+      <View style={styles.serviceCard}>
+        <Text style={styles.serviceText}>Paid Services</Text>
+        <View style={styles.innService}>
+          <View style={styles.card}>
+            <Image
+              style={styles.cardImg}
+              source={{
+                uri: 'https://randomuser.me/api/portraits/men/32.jpg', // Example astrologer image
+              }}
+              resizeMode="cover"
+            />
+            <LinearGradient
+              colors={['transparent', '#4B006E']}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1.5 }}
+            />
+            <View style={styles.cardTextCont}>
+              <Text style={styles.cardText}>Pandits</Text>
             </View>
           </View>
+          <TouchableOpacity
+            activeOpacity={0.95}
+            onPress={() => navigation.navigate('Pooja')}
+            style={styles.card}
+          >
+            <Image
+              style={styles.cardImg}
+              source={{
+                uri: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80', // Diwali/candle themed image (no h/w params)
+              }}
+              resizeMode="cover"
+            />
+            <LinearGradient
+              colors={['transparent', '#4B006E']}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1.5 }}
+            />
+            <View style={styles.cardTextCont}>
+              <Text style={styles.cardText}>Pooja</Text>
+            </View>
+          </TouchableOpacity>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+
+      {/* pandit card container (same style as astrologer card) */}
+      <View style={styles.panditCont}>
+        <View style={styles.astroTopBar}>
+          <Text style={styles.astrologer}>Pooja</Text>
+          <TouchableWithoutFeedback
+            onPress={() => navigation.navigate('Pooja')}
+          >
+            <View>
+              <Text style={styles.seeMoreText}>See more</Text>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+        <View>
+          <FlatList
+            data={poojaCard.slice(0, 10)}
+            keyExtractor={item => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.flatListContent}
+            renderItem={({ item }) => (
+              <PoojaCard item={item} navigation={navigation} />
+            )}
+            style={styles.flatListStyle}
+          />
+        </View>
+      </View>
+
+      {/* improved small banner with secure chat text */}
+      <View style={styles.bannerOuter}>
+        <View style={styles.banner1Wrapper}>
+          <Image
+            source={{
+              uri: 'https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=900&q=80', // Web security: lock icon on digital background
+            }}
+            style={styles.banner1}
+            resizeMode="cover"
+          />
+          <LinearGradient
+            colors={['rgba(0,0,0,0.0)', 'rgba(88,10,70,0.7)']}
+            style={styles.banner1Gradient}
+            start={{ x: 0.5, y: 0.2 }}
+            end={{ x: 0.5, y: 1 }}
+          />
+          <View style={styles.bannerTextContainer}>
+            <LockClosedIcon
+              size={moderateScale(28)}
+              color="#fff"
+              style={{ marginBottom: moderateScale(4) }}
+            />
+            <Text style={styles.bannerMainText}>Your Chats are Secure</Text>
+            <Text style={styles.bannerSubText}>
+              End-to-end encrypted & private
+            </Text>
+          </View>
+        </View>
+      </View>
+    </ScrollView>
   );
 };
 
 export default HomeTab;
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFE7FA',
-  },
   container: {
     flex: 1,
     backgroundColor: '#FFE7FA',
   },
   scrollContent: {
-    paddingTop: Platform.OS === 'ios' ? verticalScale(10) : verticalScale(5),
-    paddingBottom: moderateScale(30),
+    // paddingTop: Platform.OS === 'ios' ? verticalScale(10) : verticalScale(5),
+    paddingBottom: moderateScale(10),
     minHeight: SCREEN_HEIGHT,
   },
   searchBar: {
@@ -384,6 +477,7 @@ const styles = StyleSheet.create({
   },
   bannerOuter: {
     paddingHorizontal: moderateScale(8),
+    marginBottom: moderateScale(10),
   },
   astroTopBar: {
     flexDirection: 'row',
@@ -462,7 +556,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     elevation: 2,
     shadowColor: '#580A46',
-    shadowOpacity: 0.10,
+    shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
   },
@@ -497,16 +591,16 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: '5%',
+    marginTop: '2%',
   },
   largeText: {
-    paddingVertical: '3%',
-    paddingHorizontal: '10%',
+    paddingVertical: '2%',
+    paddingHorizontal: '7%',
     backgroundColor: 'rgba(88, 10, 70, 0.2)',
     borderRadius: moderateScale(25),
   },
   horoscopeText: {
-    fontSize: moderateScale(20),
+    fontSize: moderateScale(18),
     color: '#580A46',
     fontWeight: 'bold',
   },
@@ -541,7 +635,7 @@ const styles = StyleSheet.create({
   },
   serviceCard: {
     backgroundColor: '#fff0fa',
-    marginTop: '5%',
+    marginTop: '2%',
     borderRadius: moderateScale(18),
     shadowColor: '#ffadec',
     shadowOffset: { width: 0, height: 4 },
@@ -606,7 +700,7 @@ const styles = StyleSheet.create({
   // PersonCard styles (shared for astrologer and pandit)
   personCardContainer: {
     alignItems: 'center',
-    marginHorizontal:moderateScale(5),
+    marginHorizontal: moderateScale(5),
     backgroundColor: '#fff',
     borderRadius: moderateScale(12),
     padding: moderateScale(10),
@@ -649,7 +743,7 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(25),
     marginBottom: moderateScale(8),
     backgroundColor: '#fff',
-    objectFit:'fill'
+    objectFit: 'fill',
   },
   personName: {
     fontSize: moderateScale(14),
@@ -697,7 +791,7 @@ const styles = StyleSheet.create({
     fontWeight: Platform.OS === 'ios' ? '600' : 'bold',
     fontSize: moderateScale(13),
   },
-  placeholderText:{
-    color:'gray'
-  }
+  placeholderText: {
+    color: 'gray',
+  },
 });

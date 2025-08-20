@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Platform, TextInput, KeyboardAvoidingView, StatusBar } from 'react-native';
 import { ArrowLeftIcon } from 'react-native-heroicons/outline';
 import { Formik } from 'formik';
 import { Picker } from '@react-native-picker/picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import axios from 'axios';
+import Toast from 'react-native-toast-message';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.92;
@@ -20,34 +22,71 @@ const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0')
 const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
 const seconds = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
 
-const panchangData = {
-  title: "Today's Panchang",
-  location: "New Delhi, India",
-  date: "8-08-2025",
-  day: "Thursday",
-  tithi: "Shukla Trayodashi",
-  nakshatra: "Purva Shadha",
-  yoga: "Priti",
-  karan: "Taitil",
-  sunrise: "05:46:00",
-  sunset: "19:07:32",
-  vedicSunrise: "05:50:02",
-  vedicSunset: "19:03:30"
-};
+const Loader = () => (
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text style={{ fontSize: 16, color: '#888' }}>Loading...</Text>
+  </View>
+);
 
 const Panchang = ({ navigation }) => {
   const [showForm, setShowForm] = useState(false);
+  const [panchang, setPanchang] = useState(null);
+  const [isLoadPanch, setIsLoadPanch] = useState(false);
+
+  // api calling for todays panchang 
+  useEffect(() => {
+    const fetchPanchang = async () => {
+      setIsLoadPanch(true);
+      try {
+        const res = await axios.get('https://backend.navambhaw.com/v2/basic_panchang');
+        if (res.data.success) {
+          setPanchang(res.data.message);
+        
+        }
+      } catch (error) {
+        Toast.show({
+          type: 'error',
+          text1: 'Panchang',
+          text2: 'failed to load panchang'
+        });
+      }
+      setIsLoadPanch(false);
+    };
+    fetchPanchang();
+  }, []);
+
+  // api for calling places 
+    // Debounced API call for geo suggestions (updated to match Allpanchang)
+    const fetchGeoDetails = useCallback(async (place) => {
+      if (!place) {
+        // setGeoSuggestions([]);
+        return;
+      }
+      // setGeoLoading(true);
+      // setGeoError(null);
+      try {
+        const res = await axios.post('https://backend.navambhaw.com/v2/geo_details', { place });
+        if (res.data.success) {
+          // setGeoSuggestions(res.data.message.geonames || []);
+        } else {
+          // setGeoError('Failed to fetch geo details.');
+        }
+      } catch (error) {
+        // setGeoError('Failed to fetch geo details.');
+      } finally {
+        // setGeoLoading(false);
+      }
+    }, []);
+    
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Status Bar configuration */}
       <StatusBar
         barStyle="dark-content"
         backgroundColor="#f9f7fc"
         translucent={false}
         animated={true}
       />
-      {/* Top Bar with Back Button */}
       <View style={styles.topBar}>
         <TouchableOpacity
           style={styles.backButton}
@@ -66,64 +105,66 @@ const Panchang = ({ navigation }) => {
       </View>
 
       {!showForm ? (
-        <>
-          <View style={styles.centeredContent}>
-            <View style={styles.cardShadow}>
-              <View style={styles.cardGradient}>
-                <View style={styles.cardHeader}>
-                  <Text style={styles.cardDate}>{panchangData.date}</Text>
-                  <Text style={styles.cardDay}>{panchangData.day}</Text>
-                </View>
-                <View style={styles.divider} />
-                <View style={styles.cardContent}>
-                  <View style={styles.row}>
-                    <Text style={styles.label}>Location</Text>
-                    <Text style={styles.value}>{panchangData.location}</Text>
-                  </View>
-                  <View style={styles.row}>
-                    <Text style={styles.label}>Tithi</Text>
-                    <Text style={styles.value}>{panchangData.tithi}</Text>
-                  </View>
-                  <View style={styles.row}>
-                    <Text style={styles.label}>Nakshatra</Text>
-                    <Text style={styles.value}>{panchangData.nakshatra}</Text>
-                  </View>
-                  <View style={styles.row}>
-                    <Text style={styles.label}>Yoga</Text>
-                    <Text style={styles.value}>{panchangData.yoga}</Text>
-                  </View>
-                  <View style={styles.row}>
-                    <Text style={styles.label}>Karan</Text>
-                    <Text style={styles.value}>{panchangData.karan}</Text>
-                  </View>
-                  <View style={styles.row}>
-                    <Text style={styles.label}>Sunrise</Text>
-                    <Text style={styles.value}>{panchangData.sunrise}</Text>
-                  </View>
-                  <View style={styles.row}>
-                    <Text style={styles.label}>Sunset</Text>
-                    <Text style={styles.value}>{panchangData.sunset}</Text>
-                  </View>
-                  <View style={styles.row}>
-                    <Text style={styles.label}>Vedic Sunrise</Text>
-                    <Text style={styles.value}>{panchangData.vedicSunrise}</Text>
-                  </View>
-                  <View style={styles.row}>
-                    <Text style={styles.label}>Vedic Sunset</Text>
-                    <Text style={styles.value}>{panchangData.vedicSunset}</Text>
+        isLoadPanch ? (
+          <Loader />
+        ) : (
+          panchang && (
+            <>
+              <View style={styles.centeredContent}>
+                <View style={styles.cardShadow}>
+                  <View style={styles.cardGradient}>
+                    <View style={styles.cardHeader}>
+                      <Text style={styles.cardDate}>{panchang.date.substring(0, 10)}</Text>
+                      <Text style={styles.cardDay}>{panchang.day}</Text>
+                    </View>
+                    <View style={styles.divider} />
+                    <View style={styles.cardContent}>
+                      <View style={styles.row}>
+                        <Text style={styles.label}>Tithi</Text>
+                        <Text style={styles.value}>{panchang.tithi}</Text>
+                      </View>
+                      <View style={styles.row}>
+                        <Text style={styles.label}>Nakshatra</Text>
+                        <Text style={styles.value}>{panchang.nakshatra}</Text>
+                      </View>
+                      <View style={styles.row}>
+                        <Text style={styles.label}>Yoga</Text>
+                        <Text style={styles.value}>{panchang.yog}</Text>
+                      </View>
+                      <View style={styles.row}>
+                        <Text style={styles.label}>Karan</Text>
+                        <Text style={styles.value}>{panchang.karan}</Text>
+                      </View>
+                      <View style={styles.row}>
+                        <Text style={styles.label}>Sunrise</Text>
+                        <Text style={styles.value}>{panchang.sunrise}</Text>
+                      </View>
+                      <View style={styles.row}>
+                        <Text style={styles.label}>Sunset</Text>
+                        <Text style={styles.value}>{panchang.sunset}</Text>
+                      </View>
+                      <View style={styles.row}>
+                        <Text style={styles.label}>Vedic Sunrise</Text>
+                        <Text style={styles.value}>{panchang.vedic_sunrise}</Text>
+                      </View>
+                      <View style={styles.row}>
+                        <Text style={styles.label}>Vedic Sunset</Text>
+                        <Text style={styles.value}>{panchang.vedic_sunset}</Text>
+                      </View>
+                    </View>
                   </View>
                 </View>
               </View>
-            </View>
-          </View>
-          <TouchableOpacity
-            style={styles.button}
-            activeOpacity={0.85}
-            onPress={() => setShowForm(true)}
-          >
-            <Text style={styles.buttonText}>See Panchang for All Dates</Text>
-          </TouchableOpacity>
-        </>
+              <TouchableOpacity
+                style={styles.button}
+                activeOpacity={0.85}
+                onPress={() => setShowForm(true)}
+              >
+                <Text style={styles.buttonText}>See Panchang for All Dates</Text>
+              </TouchableOpacity>
+            </>
+          )
+        )
       ) : (
         <KeyboardAvoidingView
           style={styles.formContainer}
@@ -145,7 +186,6 @@ const Panchang = ({ navigation }) => {
           >
             {({ handleChange, handleBlur, handleSubmit, values, setFieldValue }) => (
               <View style={styles.formInner}>
-                {/* First row: Day, Month, Year */}
                 <View style={styles.formRowHorizontal}>
                   <View style={styles.formField}>
                     <Text style={styles.formLabel}>Day</Text>
@@ -171,7 +211,7 @@ const Panchang = ({ navigation }) => {
                         style={styles.pickerLarge}
                       >
                         <Picker.Item label="Month" value="" />
-                        {months.map((m, idx) => (
+                        {months.map((m) => (
                           <Picker.Item key={m} label={m} value={m} />
                         ))}
                       </Picker>
@@ -193,7 +233,6 @@ const Panchang = ({ navigation }) => {
                     </View>
                   </View>
                 </View>
-                {/* Second row: Hour, Minute, Second */}
                 <View style={styles.formRowHorizontal}>
                   <View style={styles.formField}>
                     <Text style={styles.formLabel}>Hour</Text>
@@ -241,7 +280,6 @@ const Panchang = ({ navigation }) => {
                     </View>
                   </View>
                 </View>
-                {/* Place row */}
                 <View style={styles.formRow}>
                   <Text style={styles.formLabel}>Place</Text>
                   <TextInput
@@ -252,7 +290,6 @@ const Panchang = ({ navigation }) => {
                     value={values.place}
                   />
                 </View>
-                {/* Submit Button */}
                 <TouchableOpacity style={styles.formButton} onPress={handleSubmit}>
                   <Text style={styles.formButtonText}>Submit</Text>
                 </TouchableOpacity>
@@ -273,17 +310,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f7fc',
     paddingHorizontal: 0,
     paddingTop: 0,
-    // paddingBottom: 16,
     justifyContent: 'flex-start',
   },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    // paddingTop: 32,
     paddingBottom: 10,
-    // paddingHorizontal: 10,
     backgroundColor: 'transparent',
-    justifyContent: 'start',
+    justifyContent: 'flex-start',
   },
   backButton: {
     width: 36,
@@ -294,7 +328,7 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontSize: 22,
-    paddingLeft:2,
+    paddingLeft: 2,
     fontWeight: 'bold',
     color: '#580A46',
     textAlign: 'left',

@@ -14,6 +14,7 @@ import PoojaFullInfo from './Components/UserMiniCompo/PoojaFullInfo';
 import Panchang from './Components/UserMiniCompo/Panchang';
 import KundliAstro from './Components/AstrologerMiniCompo/KundliAstro'
 import PoojaAstro from './Components/AstrologerMiniCompo/PoojaAstro';
+import KundliResult from './Components/UserMiniCompo/KundliResult'
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
@@ -31,6 +32,7 @@ const Navigation = () => {
         <Stack.Screen name="AstroProfile" component={AstrologerProfile} />
         <Stack.Screen name="PoojaInfo" component={PoojaFullInfo} />
         <Stack.Screen name="Panchang" component={Panchang} />
+        <Stack.Screen name="KundliResult" component={KundliResult} />
 
         {/* astrologer route */}
         <Stack.Screen name="AstorHome" component={AstrologerHomeScreen} />

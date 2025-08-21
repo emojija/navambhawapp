@@ -1,9 +1,10 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import MaskedView from '@react-native-masked-view/masked-view';
 import LinearGradient from 'react-native-linear-gradient';
 import { UserIcon, EyeIcon, EyeSlashIcon } from 'react-native-heroicons/solid';
 import axios from 'axios';
+import { UserContext } from '../../context/UserContext';
 
 const placeholderTextColor = "#999"; // Use a visible gray for placeholder
 
@@ -12,6 +13,7 @@ const SignInPage = ({ navigation }) => {
   const [Phone, setPhone] = useState("");
   const [Password, setPassword] = useState("");
   const [loginData,setLoginData]= useState({})
+  const {setUserName} = useContext(UserContext)
 
   const handleTogglePassword = () => {
     setShowPassword((prev) => !prev);
@@ -27,6 +29,8 @@ const SignInPage = ({ navigation }) => {
         console.log('Login successful:', response.data);
         setLoginData(response.data.user)
         const user = response.data.user
+        // console.log(user,"username")
+        setUserName(user.name)
         navigation.replace('UserHome',{loginUser : user});
       } else {
         console.error('Login failed: Unexpected response status', response.status);

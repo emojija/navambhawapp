@@ -1,5 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Platform, TextInput, KeyboardAvoidingView, StatusBar } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Dimensions,
+  Platform,
+  TextInput,
+  KeyboardAvoidingView,
+  FlatList,
+  StatusBar,
+} from 'react-native';
 import { ArrowLeftIcon } from 'react-native-heroicons/outline';
 import { Formik } from 'formik';
 import { Picker } from '@react-native-picker/picker';
@@ -7,20 +18,36 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.92;
 const CARD_MAX_WIDTH = 400;
 
 // Helper arrays for pickers
 const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
 const months = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 const years = Array.from({ length: 101 }, (_, i) => (1925 + i).toString());
-const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
-const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
-const seconds = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
+const hours = Array.from({ length: 24 }, (_, i) =>
+  i.toString().padStart(2, '0'),
+);
+const minutes = Array.from({ length: 60 }, (_, i) =>
+  i.toString().padStart(2, '0'),
+);
+const seconds = Array.from({ length: 60 }, (_, i) =>
+  i.toString().padStart(2, '0'),
+);
 
 const Loader = () => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -33,21 +60,22 @@ const Panchang = ({ navigation }) => {
   const [panchang, setPanchang] = useState(null);
   const [isLoadPanch, setIsLoadPanch] = useState(false);
 
-  // api calling for todays panchang 
+  // api calling for todays panchang
   useEffect(() => {
     const fetchPanchang = async () => {
       setIsLoadPanch(true);
       try {
-        const res = await axios.get('https://backend.navambhaw.com/v2/basic_panchang');
+        const res = await axios.get(
+          'https://backend.navambhaw.com/v2/basic_panchang',
+        );
         if (res.data.success) {
           setPanchang(res.data.message);
-        
         }
       } catch (error) {
         Toast.show({
           type: 'error',
           text1: 'Panchang',
-          text2: 'failed to load panchang'
+          text2: 'failed to load panchang',
         });
       }
       setIsLoadPanch(false);
@@ -55,29 +83,29 @@ const Panchang = ({ navigation }) => {
     fetchPanchang();
   }, []);
 
-  // api for calling places 
-    // Debounced API call for geo suggestions (updated to match Allpanchang)
-    const fetchGeoDetails = useCallback(async (place) => {
-      if (!place) {
-        // setGeoSuggestions([]);
-        return;
+  const [suggestions, setSuggestions] = useState([]);
+  const typingTimeoutRef = useRef(null); // keep track of timeout
+
+  // Only call the geo details API for the place input field
+  const fetchGeoDetails = async place => {
+    if (!place || place.trim().length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    try {
+      const res = await axios.post(
+        'https://backend.navambhaw.com/v2/geo_details',
+        { place },
+      );
+      if (res.status === 200) {
+        setSuggestions(res.data.message.geonames);
+      } else {
+        setSuggestions([]);
       }
-      // setGeoLoading(true);
-      // setGeoError(null);
-      try {
-        const res = await axios.post('https://backend.navambhaw.com/v2/geo_details', { place });
-        if (res.data.success) {
-          // setGeoSuggestions(res.data.message.geonames || []);
-        } else {
-          // setGeoError('Failed to fetch geo details.');
-        }
-      } catch (error) {
-        // setGeoError('Failed to fetch geo details.');
-      } finally {
-        // setGeoLoading(false);
-      }
-    }, []);
-    
+    } catch (error) {
+      setSuggestions([]);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -101,7 +129,9 @@ const Panchang = ({ navigation }) => {
         >
           <ArrowLeftIcon size={24} color="#000000" />
         </TouchableOpacity>
-        <Text style={styles.heading}>{showForm ? 'Select Panchang Date' : "Today's Panchang"}</Text>
+        <Text style={styles.heading}>
+          {showForm ? 'Select Panchang Date' : "Today's Panchang"}
+        </Text>
       </View>
 
       {!showForm ? (
@@ -114,7 +144,9 @@ const Panchang = ({ navigation }) => {
                 <View style={styles.cardShadow}>
                   <View style={styles.cardGradient}>
                     <View style={styles.cardHeader}>
-                      <Text style={styles.cardDate}>{panchang.date.substring(0, 10)}</Text>
+                      <Text style={styles.cardDate}>
+                        {panchang.date.substring(0, 10)}
+                      </Text>
                       <Text style={styles.cardDay}>{panchang.day}</Text>
                     </View>
                     <View style={styles.divider} />
@@ -145,11 +177,15 @@ const Panchang = ({ navigation }) => {
                       </View>
                       <View style={styles.row}>
                         <Text style={styles.label}>Vedic Sunrise</Text>
-                        <Text style={styles.value}>{panchang.vedic_sunrise}</Text>
+                        <Text style={styles.value}>
+                          {panchang.vedic_sunrise}
+                        </Text>
                       </View>
                       <View style={styles.row}>
                         <Text style={styles.label}>Vedic Sunset</Text>
-                        <Text style={styles.value}>{panchang.vedic_sunset}</Text>
+                        <Text style={styles.value}>
+                          {panchang.vedic_sunset}
+                        </Text>
                       </View>
                     </View>
                   </View>
@@ -160,14 +196,16 @@ const Panchang = ({ navigation }) => {
                 activeOpacity={0.85}
                 onPress={() => setShowForm(true)}
               >
-                <Text style={styles.buttonText}>See Panchang for All Dates</Text>
+                <Text style={styles.buttonText}>
+                  See Panchang for All Dates
+                </Text>
               </TouchableOpacity>
             </>
           )
         )
       ) : (
         <KeyboardAvoidingView
-          style={styles.formContainer}
+          style={styles.formContainerCentered}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
           <Formik
@@ -178,121 +216,195 @@ const Panchang = ({ navigation }) => {
               hour: '',
               minute: '',
               second: '',
-              place: ''
+              place: '',
             }}
             onSubmit={values => {
               // handle submit
             }}
           >
-            {({ handleChange, handleBlur, handleSubmit, values, setFieldValue }) => (
-              <View style={styles.formInner}>
-                <View style={styles.formRowHorizontal}>
-                  <View style={styles.formField}>
-                    <Text style={styles.formLabel}>Day</Text>
-                    <View style={styles.pickerWrapper}>
-                      <Picker
-                        selectedValue={values.day}
-                        onValueChange={value => setFieldValue('day', value)}
-                        style={styles.pickerLarge}
-                      >
-                        <Picker.Item label="Day" value="" />
-                        {days.map(d => (
-                          <Picker.Item key={d} label={d} value={d} />
-                        ))}
-                      </Picker>
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              setFieldValue,
+            }) => (
+              <View style={styles.formOuterWrapper}>
+                <View style={styles.formInnerCentered}>
+                  {/* Date Row */}
+                  <View style={[styles.formRowHorizontal, { marginBottom: 10 }]}>
+                    <View style={styles.formField}>
+                      <Text style={styles.formLabel}>Day</Text>
+                      <View style={styles.pickerWrapperFixed}>
+                        <Picker
+                          selectedValue={values.day}
+                          onValueChange={value => setFieldValue('day', value)}
+                          style={styles.pickerFixed}
+                          dropdownIconColor="#580A46"
+                          itemStyle={styles.pickerItemStyle}
+                          mode="dropdown"
+                        >
+                          <Picker.Item label="Day" value="" color="#aaa" />
+                          {days.map(d => (
+                            <Picker.Item key={d} label={d} value={d} color="#580A46" />
+                          ))}
+                        </Picker>
+                      </View>
+                    </View>
+                    <View style={styles.formField}>
+                      <Text style={styles.formLabel}>Month</Text>
+                      <View style={styles.pickerWrapperFixed}>
+                        <Picker
+                          selectedValue={values.month}
+                          onValueChange={value => setFieldValue('month', value)}
+                          style={styles.pickerFixed}
+                          dropdownIconColor="#580A46"
+                          itemStyle={styles.pickerItemStyle}
+                          mode="dropdown"
+                        >
+                          <Picker.Item label="Month" value="" color="#aaa" />
+                          {months.map(m => (
+                            <Picker.Item key={m} label={m} value={m} color="#580A46" />
+                          ))}
+                        </Picker>
+                      </View>
+                    </View>
+                    <View style={styles.formField}>
+                      <Text style={styles.formLabel}>Year</Text>
+                      <View style={styles.pickerWrapperFixed}>
+                        <Picker
+                          selectedValue={values.year}
+                          onValueChange={value => setFieldValue('year', value)}
+                          style={styles.pickerFixed}
+                          dropdownIconColor="#580A46"
+                          itemStyle={styles.pickerItemStyle}
+                          mode="dropdown"
+                        >
+                          <Picker.Item label="Year" value="" color="#aaa" />
+                          {years.map(y => (
+                            <Picker.Item key={y} label={y} value={y} color="#580A46" />
+                          ))}
+                        </Picker>
+                      </View>
                     </View>
                   </View>
-                  <View style={styles.formField}>
-                    <Text style={styles.formLabel}>Month</Text>
-                    <View style={styles.pickerWrapper}>
-                      <Picker
-                        selectedValue={values.month}
-                        onValueChange={value => setFieldValue('month', value)}
-                        style={styles.pickerLarge}
-                      >
-                        <Picker.Item label="Month" value="" />
-                        {months.map((m) => (
-                          <Picker.Item key={m} label={m} value={m} />
-                        ))}
-                      </Picker>
+                  {/* Time Row */}
+                  <View style={[styles.formRowHorizontal, { marginBottom: 10 }]}>
+                    <View style={styles.formField}>
+                      <Text style={styles.formLabel}>Hour</Text>
+                      <View style={styles.pickerWrapperFixed}>
+                        <Picker
+                          selectedValue={values.hour}
+                          onValueChange={value => setFieldValue('hour', value)}
+                          style={styles.pickerFixed}
+                          dropdownIconColor="#580A46"
+                          itemStyle={styles.pickerItemStyle}
+                          mode="dropdown"
+                        >
+                          <Picker.Item label="Hour" value="" color="#aaa" />
+                          {hours.map(h => (
+                            <Picker.Item key={h} label={h} value={h} color="#580A46" />
+                          ))}
+                        </Picker>
+                      </View>
+                    </View>
+                    <View style={styles.formField}>
+                      <Text style={styles.formLabel}>Minute</Text>
+                      <View style={styles.pickerWrapperFixed}>
+                        <Picker
+                          selectedValue={values.minute}
+                          onValueChange={value => setFieldValue('minute', value)}
+                          style={styles.pickerFixed}
+                          dropdownIconColor="#580A46"
+                          itemStyle={styles.pickerItemStyle}
+                          mode="dropdown"
+                        >
+                          <Picker.Item label="Minute" value="" color="#aaa" />
+                          {minutes.map(m => (
+                            <Picker.Item key={m} label={m} value={m} color="#580A46" />
+                          ))}
+                        </Picker>
+                      </View>
+                    </View>
+                    <View style={styles.formField}>
+                      <Text style={styles.formLabel}>Second</Text>
+                      <View style={styles.pickerWrapperFixed}>
+                        <Picker
+                          selectedValue={values.second}
+                          onValueChange={value => setFieldValue('second', value)}
+                          style={styles.pickerFixed}
+                          dropdownIconColor="#580A46"
+                          itemStyle={styles.pickerItemStyle}
+                          mode="dropdown"
+                        >
+                          <Picker.Item label="Second" value="" color="#aaa" />
+                          {seconds.map(s => (
+                            <Picker.Item key={s} label={s} value={s} color="#580A46" />
+                          ))}
+                        </Picker>
+                      </View>
                     </View>
                   </View>
-                  <View style={styles.formField}>
-                    <Text style={styles.formLabel}>Year</Text>
-                    <View style={styles.pickerWrapper}>
-                      <Picker
-                        selectedValue={values.year}
-                        onValueChange={value => setFieldValue('year', value)}
-                        style={styles.pickerLarge}
-                      >
-                        <Picker.Item label="Year" value="" />
-                        {years.map(y => (
-                          <Picker.Item key={y} label={y} value={y} />
-                        ))}
-                      </Picker>
+                  {/* Place Row */}
+                  <View style={styles.formRow}>
+                    <Text style={styles.formLabel}>Place</Text>
+                    <View style={{ position: 'relative', flex: 1 }}>
+                      <TextInput
+                        style={[
+                          styles.input,
+                          suggestions.length > 0 && { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }
+                        ]}
+                        placeholder="Enter Place"
+                        placeholderTextColor="#aaa"
+                        value={values.place}
+                        onBlur={handleBlur('place')}
+                        onChangeText={text => {
+                          setFieldValue('place', text);
+
+                          // debounce with setTimeout
+                          if (typingTimeoutRef.current) {
+                            clearTimeout(typingTimeoutRef.current);
+                          }
+                          typingTimeoutRef.current = setTimeout(() => {
+                            fetchGeoDetails(text);
+                          }, 500);
+                        }}
+                        returnKeyType="done"
+                      />
+
+                      {/* Suggestions dropdown */}
+                      {suggestions.length > 0 && (
+                        <View style={styles.options}>
+                          <FlatList
+                            data={suggestions}
+                            keyboardShouldPersistTaps="handled"
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({ item }) => (
+                              <TouchableOpacity
+                                onPress={() => {
+                                  setFieldValue('place', item.place_name);
+                                  setSuggestions([]);
+                                }}
+                                style={styles.optionItem}
+                              >
+                                <Text style={styles.optionText}>{item.place_name}</Text>
+                              </TouchableOpacity>
+                            )}
+                          />
+                        </View>
+                      )}
                     </View>
                   </View>
                 </View>
-                <View style={styles.formRowHorizontal}>
-                  <View style={styles.formField}>
-                    <Text style={styles.formLabel}>Hour</Text>
-                    <View style={styles.pickerWrapper}>
-                      <Picker
-                        selectedValue={values.hour}
-                        onValueChange={value => setFieldValue('hour', value)}
-                        style={styles.pickerLarge}
-                      >
-                        <Picker.Item label="Hour" value="" />
-                        {hours.map(h => (
-                          <Picker.Item key={h} label={h} value={h} />
-                        ))}
-                      </Picker>
-                    </View>
-                  </View>
-                  <View style={styles.formField}>
-                    <Text style={styles.formLabel}>Minute</Text>
-                    <View style={styles.pickerWrapper}>
-                      <Picker
-                        selectedValue={values.minute}
-                        onValueChange={value => setFieldValue('minute', value)}
-                        style={styles.pickerLarge}
-                      >
-                        <Picker.Item label="Minute" value="" />
-                        {minutes.map(m => (
-                          <Picker.Item key={m} label={m} value={m} />
-                        ))}
-                      </Picker>
-                    </View>
-                  </View>
-                  <View style={styles.formField}>
-                    <Text style={styles.formLabel}>Second</Text>
-                    <View style={styles.pickerWrapper}>
-                      <Picker
-                        selectedValue={values.second}
-                        onValueChange={value => setFieldValue('second', value)}
-                        style={styles.pickerLarge}
-                      >
-                        <Picker.Item label="Second" value="" />
-                        {seconds.map(s => (
-                          <Picker.Item key={s} label={s} value={s} />
-                        ))}
-                      </Picker>
-                    </View>
-                  </View>
+                {/* Button placed outside the formInnerCentered to avoid overlap */}
+                <View style={styles.formButtonWrapper}>
+                  <TouchableOpacity
+                    style={styles.formButton}
+                    onPress={handleSubmit}
+                  >
+                    <Text style={styles.formButtonText}>Submit</Text>
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.formRow}>
-                  <Text style={styles.formLabel}>Place</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter Place"
-                    onChangeText={handleChange('place')}
-                    onBlur={handleBlur('place')}
-                    value={values.place}
-                  />
-                </View>
-                <TouchableOpacity style={styles.formButton} onPress={handleSubmit}>
-                  <Text style={styles.formButtonText}>Submit</Text>
-                </TouchableOpacity>
               </View>
             )}
           </Formik>
@@ -416,8 +528,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: 'center',
     marginHorizontal: 24,
-    // marginTop: 10,
-    // marginBottom: 8,
     shadowColor: '#580A46',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.18,
@@ -430,34 +540,56 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.2,
   },
-  formContainer: {
+  // Center the form vertically and horizontally
+  formContainerCentered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
+    paddingVertical: 0,
+    backgroundColor: 'transparent',
+    minHeight: height * 0.6, // Increase form area height for more space
   },
-  formInner: {
-    width: Math.min(CARD_WIDTH, CARD_MAX_WIDTH),
+  // Outer wrapper for form and button
+  formOuterWrapper: {
+    // backgroundColor:'black',
+    flex: 1,
+    width: '100%',
+    maxWidth: CARD_MAX_WIDTH,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  // Center the form card and fix padding
+  formInnerCentered: {
+    // backgroundColor:'pink',
+    width: '100%',
+    maxWidth: CARD_MAX_WIDTH,
     backgroundColor: '#fff',
     borderRadius: 18,
-    padding: 24,
+    padding: 28, // Increased padding for more space
     shadowColor: '#580A46',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.13,
     shadowRadius: 18,
     elevation: 8,
+    // alignSelf: 'center',
+    // justifyContent: 'center',
+    minHeight: 320, // Reduced minHeight for better fit
   },
   formRow: {
-    marginBottom: 16,
+    // marginBottom: 18,
   },
   formRowHorizontal: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 18,
+    gap: 12,
   },
   formField: {
     flex: 1,
     marginHorizontal: 4,
+    minWidth: 0,
+    maxWidth: 120, // Fix picker width to prevent cropping
   },
   formLabel: {
     fontSize: 16,
@@ -465,47 +597,101 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 4,
   },
-  pickerWrapper: {
+  // Fix picker wrapper and picker height for visibility
+  pickerWrapperFixed: {
     borderWidth: 1,
     borderColor: '#f3d1f3',
     borderRadius: 8,
     overflow: 'hidden',
     backgroundColor: '#f7e6f7',
-  },
-  // Increased height for picker for better placeholder visibility
-  picker: {
+    marginBottom: 0,
+    height: Platform.OS === 'ios' ? 54 : 54, // Increased height for both platforms
+    justifyContent: 'center',
     width: '100%',
-    height: 44,
-    color: '#580A46',
+    minWidth: 90,
+    maxWidth: 120,
+    alignSelf: 'stretch',
   },
-  pickerLarge: {
+  pickerFixed: {
     width: '100%',
-    height: 56, // Increased from 44 to 56 for better visibility
+    minWidth: 90,
+    maxWidth: 120,
+    height: Platform.OS === 'ios' ? 54 : 54, // Increased height for both platforms
     color: '#580A46',
-    fontSize: 15,
+    fontSize: 17,
+    marginTop: 0,
+    marginBottom: 0,
+    paddingTop: Platform.OS === 'android' ? 0 : 8,
+    paddingBottom: Platform.OS === 'android' ? 0 : 8,
+  },
+  pickerItemStyle: {
+    fontSize: 17,
+    color: '#580A46',
+    height: 54,
+    textAlignVertical: 'center',
   },
   input: {
     borderWidth: 1,
     borderColor: '#f3d1f3',
     borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: Platform.OS === 'ios' ? 12 : 8,
+    paddingHorizontal: 14,
+    paddingVertical: Platform.OS === 'ios' ? 14 : 12,
     fontSize: 16,
     backgroundColor: '#f7e6f7',
     color: '#580A46',
-    marginTop: 4,
+    marginTop: 2,
+    minHeight: 48,
+    width: '100%',
+  },
+  formButtonWrapper: {
+    width: '100%',
+    maxWidth: CARD_MAX_WIDTH,
+    alignItems: 'center',
+    marginTop: 12,
+    marginBottom: 8,
+    // Place the button outside the card, not overlapped
   },
   formButton: {
     backgroundColor: '#580A46',
     borderRadius: 10,
     paddingVertical: 14,
     alignItems: 'center',
-    marginTop: 10,
+    width: '100%',
   },
   formButtonText: {
     color: '#fff',
     fontSize: 17,
     fontWeight: '700',
     letterSpacing: 0.2,
+  },
+  options: {
+    position: 'absolute',
+    top: 48,
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#f3d1f3',
+    borderTopWidth: 0,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
+    maxHeight: 180,
+    zIndex: 100,
+    shadowColor: '#580A46',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.10,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  optionItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderColor: '#f3d1f3',
+    backgroundColor: '#fff',
+  },
+  optionText: {
+    fontSize: 16,
+    color: '#580A46',
   },
 });

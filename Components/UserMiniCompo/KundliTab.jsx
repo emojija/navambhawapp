@@ -13,6 +13,7 @@ import {
 } from 'react-native'; 
 import { Formik } from 'formik';
 import { Picker } from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
 
 // Responsive utility functions
 const guidelineBaseWidth = 375;
@@ -25,6 +26,7 @@ const moderateScale = (size, width, factor = 0.5) =>
 
 export default function KundliForm() {
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
+  const navigation = useNavigation()
 
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -86,6 +88,7 @@ export default function KundliForm() {
               }}
               onSubmit={values => {
                 console.log(values);
+                navigation.navigate('KundliResult',{KundliData : values})
               }}
             >
               {({ handleChange, handleSubmit, setFieldValue, values }) => (

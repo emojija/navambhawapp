@@ -1,24 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, Image, StatusBar, StyleSheet, Dimensions, Platform, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {
-  HomeIcon,
-  ChatBubbleLeftIcon,
-  GlobeAltIcon,
-  BookOpenIcon,
-  InboxArrowDownIcon,
-  PlusCircleIcon,
-  WalletIcon
-} from 'react-native-heroicons/outline';
-import {
-  HomeIcon as HomeIconSolid,
-  ChatBubbleLeftIcon as ChatBubbleLeftIconSolid,
-  GlobeAltIcon as GlobeAltIconSolid,
-  BookOpenIcon as BookOpenIconSolid,
-  InboxArrowDownIcon as InboxArrowDownIconSolid,
-  ArrowLeftOnRectangleIcon
-} from 'react-native-heroicons/solid';
+import {  HomeIcon, ChatBubbleLeftIcon, GlobeAltIcon,  BookOpenIcon, InboxArrowDownIcon, PlusCircleIcon, WalletIcon, ArrowLeftOnRectangleIcon, } from 'react-native-heroicons/outline';
+import {  HomeIcon as HomeIconSolid,  ChatBubbleLeftIcon as ChatBubbleLeftIconSolid,  GlobeAltIcon as GlobeAltIconSolid,  BookOpenIcon as BookOpenIconSolid,  InboxArrowDownIcon as InboxArrowDownIconSolid,   } from 'react-native-heroicons/solid';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { DrawerActions } from '@react-navigation/native';
 
@@ -33,6 +18,7 @@ import Wallet from '../Components/UserMiniCompo/Wallet';
 import ChatCallHistory from '../Components/UserMiniCompo/ChatCallHistory';
 import EditProfile from '../Components/UserMiniCompo/EditProfile';
 import ChangePassword from '../Components/UserMiniCompo/ChangePassword';
+import { UserContext } from '../context/UserContext';
 
 // Dimensions
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -50,8 +36,8 @@ const scaleFont = size => {
 };
 
 // Top bar
-const TopBar = ({ loginUser , navigation }) => {
-  console.log("loginUser " , loginUser)
+const TopBar = ({ navigation }) => {
+ const{userName} = useContext(UserContext)
   
 
   return (
@@ -65,10 +51,10 @@ const TopBar = ({ loginUser , navigation }) => {
          
           <View>
             <Text style={styles.nameText}>
-              {loginUser && loginUser.name
-                ? (loginUser.name.length < 10
-                    ? loginUser.name
-                    : loginUser.name.split(" ")[0])
+              {userName 
+                ? (userName.length < 10
+                    ? userName
+                    : userName.split(" ")[0])
                 : 'User'}
             </Text>
             <Text style={styles.welcomeText}>Welcome</Text>
@@ -123,12 +109,12 @@ const TopBar = ({ loginUser , navigation }) => {
 
 // Bottom Tabs
 const Tab = createBottomTabNavigator();
-function BottomTabs({route}) {
-  const { loginUser } = route.params ;
+function BottomTabs() {
+  
   return (
     <Tab.Navigator
       screenOptions={({ route, navigation }) => ({
-        header: (props) => <TopBar navigation={navigation}  loginUser={loginUser} />,
+        header: (props) => <TopBar navigation={navigation}  />,
         tabBarActiveTintColor: '#580A46',
         tabBarInactiveTintColor: '#454545',
         animationEnabled: true,
@@ -181,7 +167,7 @@ function BottomTabs({route}) {
 
 // Drawer
 const Drawer = createDrawerNavigator();
-export default function App({route}) {
+export default function App() {
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -192,7 +178,7 @@ export default function App({route}) {
       <Drawer.Screen
         name="HomeTabs"
         component={BottomTabs}
-        initialParams={{ loginUser: route?.params?.loginUser }} 
+        
         options={{ title: 'Home' }}
       />
       <Drawer.Screen name="Wallet" component={Wallet} />

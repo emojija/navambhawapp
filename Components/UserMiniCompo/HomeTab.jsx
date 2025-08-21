@@ -158,7 +158,7 @@ const HomeTab = ({ navigation }) => {
   // We'll use a fixed aspect ratio and padding for the carousel container and images.
   // Let's use 16:9 aspect ratio for the banner, and make it responsive to screen width.
 
-  const CAROUSEL_WIDTH = SCREEN_WIDTH - moderateScale(16); // 8px padding on each side
+  const CAROUSEL_WIDTH = SCREEN_WIDTH ; // 8px padding on each side
   const CAROUSEL_HEIGHT = Math.round(CAROUSEL_WIDTH * 9 / 16) ; // 16:9 aspect ratio
 
   return (
@@ -472,7 +472,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   searchIcon: {
-    // No inline style, all styling here
     marginLeft: moderateScale(10),
   },
   bannerOuter: {
@@ -504,6 +503,7 @@ const styles = StyleSheet.create({
   bannerWrapper: {
     width: '100%',
     position: 'relative',
+    backgroundColor:'black',
     borderRadius: moderateScale(16),
     overflow: 'hidden',
     elevation: 4,
@@ -530,6 +530,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(12),
     zIndex: 2,
   },
+  
   bannerMainText: {
     color: '#fff',
     fontSize: moderateScale(22),

@@ -21,13 +21,13 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="UserHome" component={UserHomeScreen} />
         <Stack.Screen name="Landing" component={LandingPage} />
         <Stack.Screen name="SignIn" component={SignInPage} />
         <Stack.Screen name="AstroSignIn" component={AstrologerSignUp} />
         <Stack.Screen name="SignUp" component={SignUpPage} />
 
         {/* users route  */}
-        <Stack.Screen name="UserHome" component={UserHomeScreen} />
         <Stack.Screen name="SearchAstro" component={SearchAstrologer} />
         <Stack.Screen name="AstroProfile" component={AstrologerProfile} />
         <Stack.Screen name="PoojaInfo" component={PoojaFullInfo} />

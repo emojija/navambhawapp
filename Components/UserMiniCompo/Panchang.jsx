@@ -99,6 +99,7 @@ const Panchang = ({ navigation }) => {
       );
       if (res.status === 200) {
         setSuggestions(res.data.message.geonames);
+        // console.log("yes data is coming",res.data)
       } else {
         setSuggestions([]);
       }
